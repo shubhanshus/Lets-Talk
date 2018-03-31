@@ -1,0 +1,24 @@
+*{
+	margin: 0;
+	padding: 0;
+	background-color: #edfbff;
+}
+.navi{
+	height:100px;
+	width:100%;
+	border-bottom:solid;
+    border-bottom-color:#66dcff;
+    background:#fff;
+    box-shadow: 0 1px 1px 1px #003e51;
+}
+.navi img{
+	display: block;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: auto;
+}
+.title{
+	margin-top: 20px;
+	height:100px;
+	width:100%;
+}
