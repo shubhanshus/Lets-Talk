@@ -21,8 +21,8 @@ func Index(w http.ResponseWriter, r *http.Request){
 
     now := time.Now() // find the time right now
     IndexPageVars := PageVariables{ //store the date and time in a struct
-      Date: now.Format(),
-      Time: now.Format(),
+      Date: now.Format("02-01-2006"),
+      Time: now.Format("15:04PM"),
     }
 
     t, err := template.ParseFiles("templates/index.html") //parse the html file 
