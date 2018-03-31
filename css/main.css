@@ -22,3 +22,25 @@ body{
 	height:100px;
 	width:100%;
 }
+#mytalk{
+	height:100px;
+	width: 500px;
+	-webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    font-size: 20px;
+}
+#talk{
+	height:50px;
+	width: 500px;
+	font-size: 20px;
+	background-color: #53b0fc;
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    margin: 4px 2px;
+    cursor: pointer;
+}
