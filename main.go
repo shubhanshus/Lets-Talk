@@ -1,7 +1,6 @@
 package main
 
 import (
-"github.com/satori/go.uuid"
 "golang.org/x/crypto/bcrypt"
 "html/template"
 "net/http"
@@ -9,29 +8,7 @@ import (
 	"log"
 )
 
-type user struct {
-	UserName string
-	Password []byte
-	First    string
-	Last     string
-}
-
-type session struct {
-	un           string
-	lastActivity time.Time
-}
-
-type PageVariables struct {
-	Date         string
-	Time         string
-}
-
 var tpl *template.Template
-var dbUsers = map[string]user{}       // user ID, user
-var dbSessions = map[string]session{} // session ID, session
-var dbSessionsCleaned time.Time
-
-const sessionLength int = 300
 
 func init() {
 	tpl = template.Must(template.ParseGlob("templates/*"))
@@ -61,12 +38,11 @@ func index(w http.ResponseWriter, r *http.Request){
 		Date: now.Format("02-01-2006"),
 		Time: now.Format("15:04PM"),
 	}
-
-	t, err := template.ParseFiles("templates/index.html") //parse the html file
+	tpl, err := template.ParseFiles("templates/index.html") //parse the html file
 	if err != nil { // if there is an error
 		log.Print("template parsing error: ", err) // log it on terminal
 	}
-	err = t.Execute(w, IndexPageVars) //execute the template and pass it to index page
+	err = tpl.Execute(w, IndexPageVars) //execute the template and pass it to index page
 	if err != nil { // if there is an error
 		log.Print("template executing error: ", err) //log it on terminal
 	}
@@ -77,9 +53,6 @@ func home(w http.ResponseWriter, req *http.Request) {
 	tpl, err := template.ParseFiles("templates/home.html") //parse the html file
 	if err != nil { // if there is an error
 		log.Print("template parsing error: ", err) // log it on terminal
-	}
-	if err != nil { // if there is an error
-		log.Print("template executing error: ", err) //log it on terminal
 	}
 	showSessions() // for demonstration purposes
 	tpl.Execute(w, "home.html")
@@ -104,19 +77,11 @@ func signup(w http.ResponseWriter, req *http.Request) {
 			http.Error(w, "Username already taken", http.StatusForbidden)
 			return
 		}
+		// compare passwords
 		if p1!=p2{
 			http.Error(w, "Both the passwords don't match", http.StatusForbidden)
 			return
 		}
-		// create session
-		sID, _ := uuid.NewV4()
-		c := &http.Cookie{
-			Name:  "session",
-			Value: sID.String(),
-		}
-		c.MaxAge = sessionLength
-		http.SetCookie(w, c)
-		dbSessions[c.Value] = session{un, time.Now()}
 		// store user in dbUsers
 		bs, err := bcrypt.GenerateFromPassword([]byte(p1), bcrypt.MinCost)
 		if err != nil {
@@ -124,7 +89,12 @@ func signup(w http.ResponseWriter, req *http.Request) {
 			return
 		}
 		u = user{un, bs, f, l}
+
+		// create session
+		createSession(w,req,u)
+
 		dbUsers[un] = u
+
 		// redirect
 		http.Redirect(w, req, "/", http.StatusSeeOther)
 		return
@@ -156,14 +126,7 @@ func login(w http.ResponseWriter, req *http.Request) {
 			return
 		}
 		// create session
-		sID, _ := uuid.NewV4()
-		c := &http.Cookie{
-			Name:  "session",
-			Value: sID.String(),
-		}
-		c.MaxAge = sessionLength
-		http.SetCookie(w, c)
-		dbSessions[c.Value] = session{un, time.Now()}
+		createSession(w,req,u)
 		return
 	}
 	showSessions() // for demonstration purposes
