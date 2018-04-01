@@ -79,8 +79,19 @@ body{
 	height: 180px;
 }
 .pdate{
+	float: left;
 	margin-left: -60px;
     margin-top: -20px;
 	width: 400px;
 	height: 20px;
+}
+.heart{
+	width: 30px;
+	height: 25px;
+	margin-left: 410px;
+	float: left;
+}
+#like{
+	margin-top: -18px;
+	display: block;
 }
