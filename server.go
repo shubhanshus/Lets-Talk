@@ -7,12 +7,12 @@ import (
   "time"
 )
 //Pass variables to html
-type PageVariables struct {
-	Date         string
-	Time         string
-}
+//type PageVariables struct {
+//	Date         string
+//	Time         string
+//}
 
-func main() {
+func test() {
   //html path
 	http.HandleFunc("/", Index)
   http.HandleFunc("/login", Login)
@@ -33,7 +33,7 @@ func Index(w http.ResponseWriter, r *http.Request){
       Time: now.Format("15:04PM"),
     }
 
-    t, err := template.ParseFiles("templates/index.html") //parse the html file 
+    t, err := template.ParseFiles("templates/index.html") //parse the html file
     if err != nil { // if there is an error
   	  log.Print("template parsing error: ", err) // log it on terminal
   	}
