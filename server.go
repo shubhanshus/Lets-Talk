@@ -6,11 +6,6 @@ import (
   "net/http"
   "time"
 )
-//Pass variables to html
-//type PageVariables struct {
-//	Date         string
-//	Time         string
-//}
 
 func test() {
   //html path
