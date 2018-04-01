@@ -23,7 +23,7 @@ func test() {
 func Index(w http.ResponseWriter, r *http.Request){
 
     now := time.Now() // find the time right now
-    IndexPageVars := PageVariables{ //store the date and time in a struct
+    IndexPageVars := pageVariables{ //store the date and time in a struct
       Date: now.Format("02-01-2006"),
       Time: now.Format("15:04PM"),
     }
@@ -40,7 +40,7 @@ func Index(w http.ResponseWriter, r *http.Request){
 
 func Login(w http.ResponseWriter, r *http.Request){
 
-    LoginPageVars := PageVariables{ //store the date and time in a struct
+    LoginPageVars := pageVariables{ //store the date and time in a struct
       
     }
   
@@ -57,7 +57,7 @@ func Login(w http.ResponseWriter, r *http.Request){
 
 func Signup(w http.ResponseWriter, r *http.Request){
 
-    SignupPageVars := PageVariables{ //store the date and time in a struct
+    SignupPageVars := pageVariables{ //store the date and time in a struct
       
     }
   

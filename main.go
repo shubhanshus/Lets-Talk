@@ -6,6 +6,7 @@ import (
 "net/http"
 "time"
 	"log"
+	"github.com/satori/go.uuid"
 )
 
 var tpl *template.Template
@@ -21,6 +22,9 @@ func main() {
 	http.HandleFunc("/signup", signup)
 	http.HandleFunc("/logout", logout)
 	http.HandleFunc("/home", home)
+
+	http.HandleFunc("/showtweets", showtweets)
+
 	//resource path
 	http.Handle("/css/", http.StripPrefix("/css/", http.FileServer(http.Dir("css"))))
 	http.Handle("/img/", http.StripPrefix("/img/", http.FileServer(http.Dir("img"))))
@@ -34,7 +38,7 @@ func main() {
 func index(w http.ResponseWriter, r *http.Request){
 
 	now := time.Now() // find the time right now
-	IndexPageVars := PageVariables{ //store the date and time in a struct
+	IndexPageVars := pageVariables{ //store the date and time in a struct
 		Date: now.Format("02-01-2006"),
 		Time: now.Format("15:04PM"),
 	}
@@ -48,12 +52,51 @@ func index(w http.ResponseWriter, r *http.Request){
 	}
 }
 
-func home(w http.ResponseWriter, req *http.Request) {
+func showtweets(w http.ResponseWriter, req *http.Request) {
+	var u user
+	if alreadyLoggedIn(w, req) {
+		u =getUser(w,req)
+	}else{
+		http.Redirect(w, req, "/login", http.StatusSeeOther)
+		return
+	}
+	var tweetUser tweet
+	tweetUser=dbTweets[u.UserName]
+	tpl, err := template.ParseFiles("templates/showtweets.html") //parse the html file
+	if err != nil { // if there is an error
+		log.Print("template parsing error: ", err) // log it on terminal
+	}
+	showSessions() // for demonstration purposes
+	tpl.Execute(w,tweetUser)
+}
 
+func home(w http.ResponseWriter, req *http.Request) {
+	var u user
+	if alreadyLoggedIn(w, req) {
+		u =getUser(w,req)
+	}else{
+		http.Redirect(w, req, "/login", http.StatusSeeOther)
+		return
+	}
 	tpl, err := template.ParseFiles("templates/home.html") //parse the html file
 	if err != nil { // if there is an error
 		log.Print("template parsing error: ", err) // log it on terminal
 	}
+
+	if req.Method == http.MethodPost {
+		// get form values
+		tweetMsg := req.FormValue("tweet")
+		var tw tweet
+		sID, _ := uuid.NewV4()
+		tw = tweet{tweetMsg,time.Now(),u.UserName,sID.String()}
+		// create session
+		createSession(w,req,u)
+		putTweet(req,&u,&tw)
+		// redirect
+		http.Redirect(w, req, "/showtweets", http.StatusSeeOther)
+		return
+	}
+
 	showSessions() // for demonstration purposes
 	tpl.Execute(w, "home.html")
 }

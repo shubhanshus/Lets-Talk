@@ -12,22 +12,23 @@ type user struct {
 type session struct {
 	user
 	//un           string
-	lastActivity time.Time
-	Tweets        []Tweet
+	LastActivity time.Time
+	Tweets        []tweet
 	ViewingUser   string
 	FollowingUser bool
 	Following     []F
 }
 
-type PageVariables struct {
+type pageVariables struct {
 	Date         string
 	Time         string
 }
 
-type Tweet struct {
+type tweet struct {
 	Msg      string
 	Time     time.Time
 	UserName string
+	Id string
 }
 
 type F struct {
@@ -39,5 +40,5 @@ type F struct {
 var dbUsers = map[string]user{}       // user ID, user
 var dbSessions = map[string]session{} // session ID, session
 var dbSessionsCleaned time.Time
-
+var dbTweets = map[string]tweet{}
 const sessionLength int = 300

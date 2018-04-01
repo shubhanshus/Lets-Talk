@@ -24,7 +24,7 @@ func getUser(w http.ResponseWriter, req *http.Request) user {
 	// if the user exists already, get user
 	var u user
 	if s, ok := dbSessions[c.Value]; ok {
-		s.lastActivity = time.Now()
+		s.LastActivity = time.Now()
 		dbSessions[c.Value] = s
 		u = dbUsers[s.UserName]
 	}
@@ -38,7 +38,7 @@ func alreadyLoggedIn(w http.ResponseWriter, req *http.Request) bool {
 	}
 	s, ok := dbSessions[c.Value]
 	if ok {
-		s.lastActivity = time.Now()
+		s.LastActivity = time.Now()
 		dbSessions[c.Value] = s
 	}
 	_, ok = dbUsers[s.UserName]
@@ -52,7 +52,7 @@ func cleanSessions() {
 	fmt.Println("BEFORE CLEAN") // for demonstration purposes
 	showSessions()              // for demonstration purposes
 	for k, v := range dbSessions {
-		if time.Now().Sub(v.lastActivity) > (time.Second * 30) {
+		if time.Now().Sub(v.LastActivity) > (time.Second * 30) {
 			delete(dbSessions, k)
 		}
 	}
