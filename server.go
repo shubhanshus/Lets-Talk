@@ -77,7 +77,7 @@ func Signup(w http.ResponseWriter, r *http.Request){
 
 func Cancel(w http.ResponseWriter, r *http.Request){
 
-    CancelPageVars := PageVariables{ //store the date and time in a struct
+    CancelPageVars := pageVariables{ //store the date and time in a struct
       
     }
   
