@@ -47,7 +47,6 @@ func index(w http.ResponseWriter, r *http.Request){
 		log.Println("Username Not found")
 		IndexPageVars.UserName= ""
 	}
-
     IndexPageVars = pageVariables{ //store the date and time in a struct
       Date: now.Format("02-01-2006"),
       Time: now.Format("15:04PM"),

@@ -14,12 +14,12 @@
 </div>
 
 <div class="title">
-    <p>Hi, {{.UserName}}</p>
+    <p>Hi</p><span id="uname">{{.UserName}}</span>
     <h>Welcome to Let's Talk</h>
-    <a href="/login">Login</a>
-    <a href="/signup">Sign-up</a>
-    <a href="/cancel">Cancel account</a>
-    <a href="/logout">logout</a>
+    <div id="login"><a href="/login">Login</a></div>
+    <div id="signup"><a href="/signup">Sign-up</a></div>
+    <div id="cancel"><a href="/cancel">Cancel account</a></div>
+    <div id="logout"><a href="/logout">logout</a></div>
     <p>Today is: {{.Date}}, the time is: {{.Time}}</p>
 </div>
 
