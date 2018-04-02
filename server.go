@@ -25,9 +25,12 @@ func test() {
 func Index(w http.ResponseWriter, r *http.Request){
 
     now := time.Now() // find the time right now
+    user := getUser(w,r)
+    log.Println("Hello World")
     IndexPageVars := pageVariables{ //store the date and time in a struct
       Date: now.Format("02-01-2006"),
       Time: now.Format("15:04PM"),
+      UserName:  user.UserName,
     }
 
     t, err := template.ParseFiles("templates/index.html") //parse the html file

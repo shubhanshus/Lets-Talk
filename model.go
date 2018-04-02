@@ -22,6 +22,7 @@ type session struct {
 type pageVariables struct {
 	Date         string
 	Time         string
+	UserName	 string
 }
 
 type tweet struct {
