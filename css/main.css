@@ -1,12 +1,12 @@
 body{
-	margin: 0;
-	padding: 0;
-	background-color: #edfbff;
+    margin: 0;
+    padding: 0;
+    background-color: #edfbff;
 }
 .navi{
-	height:100px;
-	width:100%;
-	border-bottom:solid;
+    height:100px;
+    width:100%;
+    border-bottom:solid;
     border-bottom-color:#66dcff;
     background:#fff;
     box-shadow: 0 1px 1px 1px #2f5072;
@@ -14,20 +14,20 @@ body{
     top: 0%;
 }
 .navi img{
-	display: block;
+    display: block;
     margin-left: auto;
     margin-right: auto;
     margin-top: auto;
 }
 .title{
-	margin-top: 120px;
-	height:100px;
-	width:100%;
+    margin-top: 120px;
+    height:100px;
+    width:100%;
 }
 #mytalk{
-	height:100px;
-	width: 500px;
-	-webkit-border-radius: 5px;
+    height:100px;
+    width: 500px;
+    -webkit-border-radius: 5px;
     -moz-border-radius: 5px;
     border-radius: 5px;
     font-size: 20px;
@@ -36,10 +36,10 @@ body{
     box-shadow:0px 5px 5px -5px #000;
 }
 #talk{
-	height:50px;
-	width: 510px;
-	font-size: 20px;
-	background-color: #53b0fc;
+    height:50px;
+    width: 510px;
+    font-size: 20px;
+    background-color: #53b0fc;
     border: none;
     color: white;
     padding: 15px 32px;
@@ -53,45 +53,45 @@ body{
     border-radius: 5px;
 }
 .talklist{
-	margin-top: 20px;
-	text-align: center;
-	height:300px;
-	width: 500px;
-	background-color: #fff;
-	box-shadow:0px 0px 10px #000;
+    margin-top: 20px;
+    text-align: center;
+    height:300px;
+    width: 500px;
+    background-color: #fff;
+    box-shadow:0px 0px 10px #000;
 }
 .profile{
-	padding-top: 10px;
-	padding-left: 10px;
-	width: 50px;
-	height: 50px;
-	float: left;
+    padding-top: 10px;
+    padding-left: 10px;
+    width: 50px;
+    height: 50px;
+    float: left;
 }
 .username{
-	padding-left: 10px;
-	width: 50px;
-	height: 50px;
+    padding-left: 10px;
+    width: 50px;
+    height: 50px;
 }
 .content{
-	padding-left: 50px;
-	padding-top: 30px;
-	width: 400px;
-	height: 180px;
+    padding-left: 50px;
+    padding-top: 30px;
+    width: 400px;
+    height: 180px;
 }
 .pdate{
-	float: left;
-	margin-left: -60px;
+    float: left;
+    margin-left: -60px;
     margin-top: -20px;
-	width: 400px;
-	height: 20px;
+    width: 400px;
+    height: 20px;
 }
 .heart{
-	width: 30px;
-	height: 25px;
-	margin-left: 410px;
-	float: left;
+    width: 30px;
+    height: 25px;
+    margin-left: 410px;
+    float: left;
 }
 #like{
-	margin-top: -18px;
-	display: block;
+    margin-top: -18px;
+    display: block;
 }

@@ -1,77 +1,78 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<link rel="stylesheet" type="text/css" href="/css/main.css">
-	<title>Let's Talk</title>
+    <link rel="stylesheet" type="text/css" href="/css/main.css">
+    <title>Let's Talk</title>
 </head>
 <body>
-	<div class="navi">
-		<img src="/img/talk.jpg" height ="80" width="160" />
+<div class="navi">
+    <img src="/img/talk.jpg" height ="80" width="160" />
 
-	</div>
+</div>
 
-	<div class="title">
-		<h>Welcome to Let's Talk</h>
-		<a href="/login">Login</a>
-		<a href="/signup">Sign-up</a>
-		<a href="/cancel">Cancel account</a>
-		<p>Today is: {{.Date}}, the time is: {{.Time}}</p>
-	</div>
+<div class="title">
+    <h>Welcome to Let's Talk</h>
+    <a href="/login">Login</a>
+    <a href="/signup">Sign-up</a>
+    <a href="/cancel">Cancel account</a>
+    <a href="/logout">logout</a>
+    <p>Today is: {{.Date}}, the time is: {{.Time}}</p>
+</div>
 
-	<center><div class="blog">
-		<div class="yourtalk">
-		    <form class="">
-		      <textarea id="mytalk" placeholder="Talk what do you want but in 100 characters."></textarea>
-		      <div>
-		     	<button id="talk">Talk!</button>
-		     </div>
-		    </form>
-	  </div>
-		</div>
+<center><div class="blog">
+    <div class="yourtalk">
+        <form class="">
+            <textarea id="mytalk" placeholder="Talk what do you want but in 100 characters."></textarea>
+            <div>
+                <button id="talk">Talk!</button>
+            </div>
+        </form>
+    </div>
+</div>
 
-		<h>List of talkings</h>
+    <h>List of talkings</h>
 
-		<div class="talklist">
-			<div class="profile">
-				<img src="/img/profile.jpg" height ="50" width="50" />
-			</div>
-			<div class="username">
-				<h>Username</h>
-			</div>
-			<div class="content">
-				<p>🎉 Go 1.10.1 and 1.9.5 are released!<br>
-					🗣 Announcement: https://groups.google.com/d/msg/golang-announce/IkPkOF8JqLs/TFBbWHJYAwAJ …
-</p>
-			</div>
-			<div class="pdate">
-				<p>Post time: 2018-03-31, 20:12:16</p>
-			</div>
-			<div class="heart">
-				<a href=""><img src="/img/heart.png" height ="20" width="30" /></a>
-			</div>
-			<div id="like"><p>Like</p></div>
-		</div>
-		
-		<div class="talklist">
-			<div class="profile">
-				<img src="/img/profile.jpg" height ="50" width="50" />
-			</div>
-			<div class="username">
-				<h>Username</h>
-			</div>
-			<div class="content">
-				<p>Understanding ordering and deduplication is vital for building correct systems, particularly distributed systems. Implementing global ordering within a distributed system is generally not possible. http://bit.ly/2Dy6Rt1 👏</p>
-			</div>
-			<div class="pdate">
-				<p>Post time: 2018-03-31, 21:12:16</p>
-			</div>
-			<div class="heart">
-				<a href=""><img src="/img/heart.png" height ="20" width="30" /></a>
-			</div>
-			<div id="like"><p>Like</p></div>
-		</div>
+    <div class="talklist">
+        <div class="profile">
+            <img src="/img/profile.jpg" height ="50" width="50" />
+        </div>
+        <div class="username">
+            <h>Username</h>
+        </div>
+        <div class="content">
+            <p>🎉 Go 1.10.1 and 1.9.5 are released!<br>
+                🗣 Announcement: https://groups.google.com/d/msg/golang-announce/IkPkOF8JqLs/TFBbWHJYAwAJ …
+            </p>
+        </div>
+        <div class="pdate">
+            <p>Post time: 2018-03-31, 20:12:16</p>
+        </div>
+        <div class="heart">
+            <a href=""><img src="/img/heart.png" height ="20" width="30" /></a>
+        </div>
+        <div id="like"><p>Like</p></div>
+    </div>
 
-	</div></center>
+    <div class="talklist">
+        <div class="profile">
+            <img src="/img/profile.jpg" height ="50" width="50" />
+        </div>
+        <div class="username">
+            <h>Username</h>
+        </div>
+        <div class="content">
+            <p>Understanding ordering and deduplication is vital for building correct systems, particularly distributed systems. Implementing global ordering within a distributed system is generally not possible. http://bit.ly/2Dy6Rt1 👏</p>
+        </div>
+        <div class="pdate">
+            <p>Post time: 2018-03-31, 21:12:16</p>
+        </div>
+        <div class="heart">
+            <a href=""><img src="/img/heart.png" height ="20" width="30" /></a>
+        </div>
+        <div id="like"><p>Like</p></div>
+    </div>
+
+    </div></center>
 
 
 

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="/css/main.css">
+</head>
+<head>
+    <meta charset="UTF-8">
+    <main>
+    {{range .Tweets}}
+        <section>
+            <i class="fa fa-user fa-2x"></i>
+            <div>
+                <p class="POST">{{.Msg}}</p>
+                <p class="post-meta">{{.UserName}}</p>
+                <p class="post-meta">{{.Time}}</p>
+            </div>
+        </section>
+    {{end}}
+    </main>
+</head>
+<body>
+
+</body>
+</html>
+
+
+
