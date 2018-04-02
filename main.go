@@ -1,10 +1,10 @@
 package main
 
 import (
-"golang.org/x/crypto/bcrypt"
-"html/template"
-"net/http"
-"time"
+	"golang.org/x/crypto/bcrypt"
+	"html/template"
+	"net/http"
+	"time"
 	"log"
 	"github.com/satori/go.uuid"
 )
