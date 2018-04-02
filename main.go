@@ -120,7 +120,7 @@ func signup(w http.ResponseWriter, req *http.Request) {
 	// process form submission
 	if req.Method == http.MethodPost {
 		// get form values
-		un := req.FormValue("username")
+		un := req.FormValue("email")
 		p1 := req.FormValue("password1")
 		p2 := req.FormValue("password2")
 		f := req.FormValue("firstname")
