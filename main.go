@@ -38,20 +38,22 @@ func main() {
 func index(w http.ResponseWriter, r *http.Request){
 	var u user
 	var IndexPageVars pageVariables
+	var uname string
 	now := time.Now() // find the time right now
 	if len(dbSessions)!=0{
 		u = getUser(w,r)
 		log.Println("Hello World", u.UserName)
-		IndexPageVars.UserName= u.UserName
+		uname = u.UserName
 	}else {
 		log.Println("Username Not found")
-		IndexPageVars.UserName= ""
+		uname = ""
 	}
     IndexPageVars = pageVariables{ //store the date and time in a struct
       Date: now.Format("02-01-2006"),
       Time: now.Format("15:04PM"),
+      UserName: uname,
     }
-
+    //log.Println("uname", uname)
 	tpl, err := template.ParseFiles("templates/index.html") //parse the html file
 	if err != nil { // if there is an error
 		log.Print("template parsing error: ", err) // log it on terminal
