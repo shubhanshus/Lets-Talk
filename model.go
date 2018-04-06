@@ -37,6 +37,11 @@ type F struct {
 	Follower  string
 }
 
+type mytalk struct {
+	UserName	 string
+	Talk         string
+	Date         string
+}
 
 var dbUsers = map[string]user{}       // user ID, user
 var dbSessions = map[string]session{} // session ID, session

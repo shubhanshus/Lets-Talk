@@ -7,9 +7,13 @@ import (
 	"time"
 	"log"
 	"github.com/satori/go.uuid"
+	"encoding/json"
+	"os"
+
 )
 
 var tpl *template.Template
+var u user
 
 func init() {
 	tpl = template.Must(template.ParseGlob("templates/*"))
@@ -23,7 +27,7 @@ func main() {
 	http.HandleFunc("/logout", logout)
 	http.HandleFunc("/home", home)
 
-	http.HandleFunc("/showtweets", showtweets)
+	http.HandleFunc("/talk", postTalk)
 
 	//resource path
 	http.Handle("/css/", http.StripPrefix("/css/", http.FileServer(http.Dir("css"))))
@@ -32,11 +36,17 @@ func main() {
 	http.Handle("/favicon.ico", http.NotFoundHandler())
 	http.ListenAndServe(":8080", nil)
 
+	//create json file
+	jsonFile, err := os.Create("./talkList.json")
+    if err != nil{
+    	panic(err)
+    }
+    log.Println("creating file", jsonFile)
+
 }
 
 
 func index(w http.ResponseWriter, r *http.Request){
-	var u user
 	var IndexPageVars pageVariables
 	var uname string
 	now := time.Now() // find the time right now
@@ -160,7 +170,7 @@ func signup(w http.ResponseWriter, req *http.Request) {
 
 func login(w http.ResponseWriter, req *http.Request) {
 	if alreadyLoggedIn(w, req) {
-		http.Redirect(w, req, "/home", http.StatusSeeOther)
+		http.Redirect(w, req, "/index", http.StatusSeeOther)
 		return
 	}
 	var u user
@@ -205,9 +215,38 @@ func logout(w http.ResponseWriter, req *http.Request) {
 	http.SetCookie(w, c)
 
 	// clean up dbSessions
-	if time.Now().Sub(dbSessionsCleaned) > (time.Second * 300) {
+	if time.Now().Sub(dbSessionsCleaned) > (time.Second * 600) {
 		go cleanSessions()
 	}
 
 	http.Redirect(w, req, "/login", http.StatusSeeOther)
+}
+
+func postTalk(w http.ResponseWriter, req *http.Request) {
+	log.Println("method:", req.Method) //get request method
+	req.ParseForm()
+
+	talkf := req.Form["mytalk"]
+	talk := talkf[0]
+
+    talks := mytalk{
+		UserName: u.UserName,
+		Talk: talk,
+		Date: time.Now().Format("02-01-2006"),
+	}
+	log.Println(talks)
+
+	val, err := json.Marshal(talks)
+	if err != nil {
+    	panic(err)
+    }
+    
+    log.Println(string(val))
+
+    //write json file
+    jsonFile, err := os.OpenFile("./talkList.json",os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	jsonFile.Write(val)
+    log.Println("list written to ", jsonFile.Name())
+
+    http.Redirect(w, req, "/", http.StatusSeeOther)
 }

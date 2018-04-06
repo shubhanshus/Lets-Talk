@@ -25,10 +25,10 @@
 
 <center><div class="blog">
     <div class="yourtalk">
-        <form class="">
-            <textarea id="mytalk" placeholder="Talk what do you want but in 100 characters."></textarea>
+        <form class="talk-form"  action="/talk" method="post">
+            <textarea id="mytalk" name="mytalk" placeholder="Talk what do you want but in 100 characters."></textarea>
             <div>
-                <button id="talk">Talk!</button>
+                <input id="talk" type="submit" value="Talk!"></input>
             </div>
         </form>
     </div>
