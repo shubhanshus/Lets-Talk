@@ -47,4 +47,5 @@ var dbUsers = map[string]user{}       // user ID, user
 var dbSessions = map[string]session{} // session ID, session
 var dbSessionsCleaned time.Time
 var dbTweets = map[string]tweet{}
+var dbmytalk = map[int]mytalk{}
 const sessionLength int = 300

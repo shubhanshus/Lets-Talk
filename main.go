@@ -267,18 +267,17 @@ func postTalk(w http.ResponseWriter, req *http.Request) {
 
 func showTalk(w http.ResponseWriter, req *http.Request) {
 	//get json api
-    json.NewEncoder(w).Encode(talks);
+    json.NewEncoder(w).Encode(talks)
 
 
 }
 
 func cancel(w http.ResponseWriter, req *http.Request) {
-	//get json api
 	if !alreadyLoggedIn(w, req) {
 		http.Redirect(w, req, "/", http.StatusSeeOther)
 		return
 	}
-	u = getUser(w,req);
+	u = getUser(w,req)
 	delete(dbUsers, u.UserName);
 	c, _ := req.Cookie("session")
 	// delete the session
@@ -288,6 +287,16 @@ func cancel(w http.ResponseWriter, req *http.Request) {
 		Value:  "",
 		MaxAge: -1,
 	}
-	http.SetCookie(w, c)
+	for i,talk:=range dbmytalk{
+		if talk.UserName==u.UserName{
+			log.Println("inside the deletion loop")
+			delete(dbmytalk,i)
+		}
+	}
+	var talks3 []mytalk
+	talks=talks3
+	for _,talk:=range dbmytalk{
+		talks=append(talks,talk)
+	}
 	http.Redirect(w, req, "/", http.StatusSeeOther)
 }
