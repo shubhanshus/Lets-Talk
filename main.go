@@ -31,7 +31,7 @@ func main() {
 	http.HandleFunc("/talk", postTalk)
 	http.HandleFunc("/list", showTalk)
 	http.HandleFunc("/follow", follow)
-
+	http.HandleFunc("/followothers", followothers)
 	//resource path
 	http.Handle("/css/", http.StripPrefix("/css/", http.FileServer(http.Dir("css"))))
 	http.Handle("/img/", http.StripPrefix("/img/", http.FileServer(http.Dir("img"))))
@@ -316,6 +316,39 @@ func follow(w http.ResponseWriter, req *http.Request) {
 		users=append(users, us)
 	}
 	json.NewEncoder(w).Encode(users)
+}
+
+
+func followothers(w http.ResponseWriter, r *http.Request) {
+
+	var FollowPageVars followVariables
+	var uname string
+	var users []string
+	for _,us:=range dbUsers{
+		users=append(users, us.UserName)
+	}
+
+	if len(dbSessions)!=0{
+		u = getUser(w,r)
+		log.Println("Hello World", u.UserName)
+		uname = u.UserName
+	}else {
+		log.Println("Username Not found")
+		uname = ""
+	}
+    FollowPageVars = followVariables{ 
+      UserName: uname,
+      UserNames: users,
+    }
+    //log.Println("uname", uname)
+	tpl, err := template.ParseFiles("templates/follow.html") //parse the html file
+	if err != nil { // if there is an error
+		log.Print("template parsing error: ", err) // log it on terminal
+	}
+	err = tpl.Execute(w, FollowPageVars) //execute the template and pass it to index page
+	if err != nil { // if there is an error
+		log.Print("template executing error: ", err) //log it on terminal
+	}
 
 
 }
