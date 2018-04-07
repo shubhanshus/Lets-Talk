@@ -27,7 +27,8 @@ func main() {
 	http.HandleFunc("/signup", signup)
 	http.HandleFunc("/logout", logout)
 	//http.HandleFunc("/home", home)
-	http.HandleFunc("/cancelaccount", cancel)
+	http.HandleFunc("/cancel", cancel)
+	http.HandleFunc("/cancelaccount", cancelaccount)
 
 	http.HandleFunc("/talk", postTalk)
 	http.HandleFunc("/list", showTalk)
@@ -294,7 +295,17 @@ func cancel(w http.ResponseWriter, req *http.Request) {
 	http.SetCookie(w, c)
 	http.Redirect(w, req, "/", http.StatusSeeOther)
 }
-
+func cancelaccount(w http.ResponseWriter, r *http.Request){
+	
+	tpl, err := template.ParseFiles("templates/cancel.html") //parse the html file
+	if err != nil { // if there is an error
+		log.Print("template parsing error: ", err) // log it on terminal
+	}
+	err = tpl.Execute(w, "") //execute the template and pass it to index page
+	if err != nil { // if there is an error
+		log.Print("template executing error: ", err) //log it on terminal
+	}
+}
 func follow(w http.ResponseWriter, req *http.Request) {
 
 	if !alreadyLoggedIn(w, req) {
