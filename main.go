@@ -232,6 +232,7 @@ func logout(w http.ResponseWriter, req *http.Request) {
 }
 
 func postTalk(w http.ResponseWriter, req *http.Request) {
+	count:=0
 	log.Println("method:", req.Method) //get request method
 	req.ParseForm()
 
@@ -245,10 +246,11 @@ func postTalk(w http.ResponseWriter, req *http.Request) {
 			Talk: talk,
 			Date: time.Now().Format("02-01-2006")+" "+time.Now().Format("15:04PM"),
 		}
-		talks = append(talks, talka);
+		talks = append(talks, talka)
 
 		log.Println(talks)
-	
+		count=len(dbmytalk)
+		dbmytalk[count]=talka
 		/*dont need to write file
 		val, err := json.Marshal(talks)
 		if err != nil {
@@ -297,6 +299,8 @@ func cancel(w http.ResponseWriter, req *http.Request) {
 	talks=talks3
 	for _,talk:=range dbmytalk{
 		talks=append(talks,talk)
+		log.Println(talk)
 	}
+	http.SetCookie(w, c)
 	http.Redirect(w, req, "/", http.StatusSeeOther)
 }
