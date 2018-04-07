@@ -17,7 +17,6 @@ Store all the html pages
 Install package:
 go get github.com/satori/go.uuid
 go get -u golang.org/x/crypto/bcrypt
-go get google.golang.org/appengine
 
 
 Router:
@@ -28,10 +27,11 @@ Ajax get json and parse data to html
 Features:
 Login:
 Signup:
-(password is bcrypted)
+(password is encrypted)
 Post talks
 View others talks
 Like others talks
+Cancel you account
 
 Additonal features:
 Share to twitter and facebook
