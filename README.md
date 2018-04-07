@@ -1,4 +1,7 @@
 # distributed_systems_final
+Team members:
+Yingxi Cao(yc2539) and Shubhanshu Surana(ss11012)
+
 This is the final project for distributed systems class. 
 
 To start run server.go 
@@ -25,13 +28,15 @@ http://localhost:8080/list
 Ajax get json and parse data to html
 
 Features:
-Login:
-Signup:
-(password is encrypted)
+Login
+Signup (password is encrypted)
+Cancel you account
+
 Post talks
 View others talks
 Like others talks
-Cancel you account
+
 
 Additonal features:
 Share to twitter and facebook
+Follow other users
