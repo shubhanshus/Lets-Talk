@@ -18,3 +18,20 @@ Install package:
 go get github.com/satori/go.uuid
 go get -u golang.org/x/crypto/bcrypt
 go get google.golang.org/appengine
+
+
+Router:
+RESTFUL Api for post list:
+http://localhost:8080/list
+Ajax get json and parse data to html
+
+Features:
+Login:
+Signup:
+(password is bcrypted)
+Post talks
+View others talks
+Like others talks
+
+Additonal features:
+Share to twitter and facebook
