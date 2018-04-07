@@ -14,6 +14,7 @@ import (
 
 var tpl *template.Template
 var u user
+var talks []mytalk
 
 func init() {
 	tpl = template.Must(template.ParseGlob("templates/*"))
@@ -28,6 +29,7 @@ func main() {
 	http.HandleFunc("/home", home)
 
 	http.HandleFunc("/talk", postTalk)
+	http.HandleFunc("/list", showTalk)
 
 	//resource path
 	http.Handle("/css/", http.StripPrefix("/css/", http.FileServer(http.Dir("css"))))
@@ -37,7 +39,7 @@ func main() {
 	http.ListenAndServe(":8080", nil)
 
 	//create json file
-	jsonFile, err := os.Create("./talkList.json")
+	jsonFile, err := os.Create("json/talkList.json")
     if err != nil{
     	panic(err)
     }
@@ -229,13 +231,17 @@ func postTalk(w http.ResponseWriter, req *http.Request) {
 	talkf := req.Form["mytalk"]
 	talk := talkf[0]
 
-    talks := mytalk{
+
+    talka := mytalk{
 		UserName: u.UserName,
 		Talk: talk,
-		Date: time.Now().Format("02-01-2006"),
+		Date: time.Now().Format("02-01-2006")+" "+time.Now().Format("15:04PM"),
 	}
-	log.Println(talks)
+	talks = append(talks, talka);
 
+	log.Println(talks)
+	
+	/*dont need to write file
 	val, err := json.Marshal(talks)
 	if err != nil {
     	panic(err)
@@ -244,9 +250,17 @@ func postTalk(w http.ResponseWriter, req *http.Request) {
     log.Println(string(val))
 
     //write json file
-    jsonFile, err := os.OpenFile("./talkList.json",os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+    jsonFile, err := os.OpenFile("json/talkList.json",os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	jsonFile.Write(val)
-    log.Println("list written to ", jsonFile.Name())
+    log.Println("list written to ", jsonFile.Name())*/
 
     http.Redirect(w, req, "/", http.StatusSeeOther)
 }
+
+func showTalk(w http.ResponseWriter, req *http.Request) {
+	//get json api
+    json.NewEncoder(w).Encode(talks);
+
+
+}
+
