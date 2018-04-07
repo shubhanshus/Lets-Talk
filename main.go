@@ -27,6 +27,7 @@ func main() {
 	http.HandleFunc("/signup", signup)
 	http.HandleFunc("/logout", logout)
 	http.HandleFunc("/home", home)
+	http.HandleFunc("/cancel", cancel)
 
 	http.HandleFunc("/talk", postTalk)
 	http.HandleFunc("/list", showTalk)
@@ -180,12 +181,14 @@ func login(w http.ResponseWriter, req *http.Request) {
 	var u user
 	// process form submission
 	if req.Method == http.MethodPost {
-		un := req.FormValue("username")
+		un := req.FormValue("name")
 		p := req.FormValue("password")
 		// is there a username?
 		u, ok := dbUsers[un]
 		if !ok {
-			http.Error(w, "Username and/or password do not match", http.StatusForbidden)
+			log.Println(un)
+			log.Println(dbUsers)
+			http.Error(w, "Username not found", http.StatusForbidden)
 			return
 		}
 		// does the entered password match the stored password?
@@ -196,9 +199,11 @@ func login(w http.ResponseWriter, req *http.Request) {
 		}
 		// create session
 		createSession(w,req,u)
+		http.Redirect(w, req, "/", http.StatusSeeOther)
 		return
 	}
 	showSessions() // for demonstration purposes
+
 	tpl.ExecuteTemplate(w, "login.html", u)
 }
 
@@ -267,3 +272,22 @@ func showTalk(w http.ResponseWriter, req *http.Request) {
 
 }
 
+func cancel(w http.ResponseWriter, req *http.Request) {
+	//get json api
+	if !alreadyLoggedIn(w, req) {
+		http.Redirect(w, req, "/", http.StatusSeeOther)
+		return
+	}
+	u = getUser(w,req);
+	delete(dbUsers, u.UserName);
+	c, _ := req.Cookie("session")
+	// delete the session
+	delete(dbSessions, c.Value)
+	c = &http.Cookie{
+		Name:   "session",
+		Value:  "",
+		MaxAge: -1,
+	}
+	http.SetCookie(w, c)
+	http.Redirect(w, req, "/", http.StatusSeeOther)
+}
