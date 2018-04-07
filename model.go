@@ -16,7 +16,7 @@ type session struct {
 	Tweets        []tweet
 	ViewingUser   string
 	FollowingUser bool
-	Following     []F
+	Following     []string
 }
 
 type pageVariables struct {
@@ -36,10 +36,10 @@ type tweet struct {
 	Id string
 }
 
-type F struct {
-	Following string
-	Follower  string
-}
+//type F struct {
+//	Following string
+//	Follower  string
+//}
 
 type mytalk struct {
 	UserName	 string

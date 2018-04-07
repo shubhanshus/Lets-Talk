@@ -8,7 +8,8 @@ import (
 	"log"
 	"encoding/json"
 	"os"
-
+	"sort"
+	"strings"
 )
 
 var tpl *template.Template
@@ -26,8 +27,7 @@ func main() {
 	http.HandleFunc("/signup", signup)
 	http.HandleFunc("/logout", logout)
 	//http.HandleFunc("/home", home)
-	http.HandleFunc("/cancel", cancel)
-	http.HandleFunc("/cancelaccount", cancelaccount)
+	http.HandleFunc("/cancelaccount", cancel)
 
 	http.HandleFunc("/talk", postTalk)
 	http.HandleFunc("/list", showTalk)
@@ -290,32 +290,9 @@ func cancel(w http.ResponseWriter, req *http.Request) {
 		Value:  "",
 		MaxAge: -1,
 	}
-	for i,talk:=range dbmytalk{
-		if talk.UserName==u.UserName{
-			log.Println("inside the deletion loop")
-			delete(dbmytalk,i)
-		}
-	}
-	var talks3 []mytalk
-	talks=talks3
-	for _,talk:=range dbmytalk{
-		talks=append(talks,talk)
-		log.Println(talk)
-	}
+	deleteTweets()
 	http.SetCookie(w, c)
 	http.Redirect(w, req, "/", http.StatusSeeOther)
-}
-
-func cancelaccount(w http.ResponseWriter, r *http.Request){
-	
-	tpl, err := template.ParseFiles("templates/cancel.html") //parse the html file
-	if err != nil { // if there is an error
-		log.Print("template parsing error: ", err) // log it on terminal
-	}
-	err = tpl.Execute(w, "") //execute the template and pass it to index page
-	if err != nil { // if there is an error
-		log.Print("template executing error: ", err) //log it on terminal
-	}
 }
 
 func follow(w http.ResponseWriter, req *http.Request) {
@@ -332,8 +309,11 @@ func follow(w http.ResponseWriter, req *http.Request) {
 }
 
 
-func followothers(w http.ResponseWriter, r *http.Request) {
-
+func followothers(w http.ResponseWriter, req *http.Request) {
+	if !alreadyLoggedIn(w, req) {
+		http.Redirect(w, req, "/", http.StatusSeeOther)
+		return
+	}
 	var FollowPageVars followVariables
 	var uname string
 	var users []string
@@ -342,28 +322,88 @@ func followothers(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if len(dbSessions)!=0{
-		u = getUser(w,r)
-		log.Println("Hello World", u.UserName)
+		u = getUser(w,req)
+		log.Println("Hello ", u.UserName)
 		uname = u.UserName
 	}else {
 		log.Println("Username Not found")
 		uname = ""
 	}
 
-    FollowPageVars = followVariables{ 
-      UserName: uname,
-      UserNames: users,
-    }
-    log.Println("users:", users)
-    log.Println("users map:", dbUsers)
-	tpl, err := template.ParseFiles("templates/follow.html") //parse the html file
-	if err != nil { // if there is an error
-		log.Print("template parsing error: ", err) // log it on terminal
+	FollowPageVars = followVariables{
+		UserName: uname,
+		UserNames: users,
 	}
-	err = tpl.Execute(w, FollowPageVars) //execute the template and pass it to index page
-	if err != nil { // if there is an error
-		log.Print("template executing error: ", err) //log it on terminal
-	}
+	//log.Println("users:", users)
+	//log.Println("users map:", dbUsers)
 
 
+	if req.Method == http.MethodPost {
+		var ud []string
+		req.ParseForm()
+		log.Println(req.Form)
+		c, _ := req.Cookie("session")
+		log.Println("------------------------follow function------------")
+		for key, values := range req.Form {   // range over map
+			for _, value := range values {    // range over []string
+				log.Println(key, value)
+				log.Println(c.Value)
+				ud=append(ud, value)
+			}
+		}
+		var session = dbSessions[c.Value]
+		session.Following=ud
+		updateTweets(session)
+		http.Redirect(w, req, "/", http.StatusSeeOther)
+		return
+	}else{
+		tpl, err := template.ParseFiles("templates/follow.html") //parse the html file
+		if err != nil { // if there is an error
+			log.Print("template parsing error: ", err) // log it on terminal
+		}
+		err = tpl.Execute(w, FollowPageVars) //execute the template and pass it to index page
+		if err != nil { // if there is an error
+			log.Print("template executing error: ", err) //log it on terminal
+		}
+	}
+
+}
+
+
+func updateTweets(session session) {
+	var talks3 []mytalk
+	log.Println("Followers:",session.Following)
+	for _,uss:= range session.Following{
+		for _,talk:=range dbmytalk{
+			if talk.UserName==uss{
+				talks3=append(talks3, talk)
+			}
+		}
+	}
+	talks=talks3
+	sort.Slice(talks, func(i, j int) bool {
+		switch strings.Compare(talks[i].Date, talks[j].Date) {
+		case -1:
+			return true
+		case 1:
+			return false
+		}
+		return talks[i].Date > talks[j].Date
+	})
+	log.Println(talks)
+}
+
+func deleteTweets(){
+	for i,talk:=range dbmytalk{
+		if talk.UserName==u.UserName{
+			log.Println("inside the deletion loop")
+			delete(dbmytalk,i)
+		}
+	}
+	var talks3 []mytalk
+	talks=talks3
+	for _,talk:=range dbmytalk{
+		talks=append(talks,talk)
+		log.Println(talk)
+	}
 }
