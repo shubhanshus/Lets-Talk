@@ -14,7 +14,7 @@ $(function(){
 	$( "#talk" ).click(function() {
 		if(uname == ''){
 			alert("Please login or sign up first, thanks");
-			return;
+			window.history.back();
 		}
   		
 	});
@@ -28,7 +28,7 @@ $(function(){
 			console.log(data);
 			var talklist;
 			var count = 0;
-			if(data == "undefined"){
+			if(data == null){
 				talklist = "<p>There is not post.</p>";
 			}else{
 				talklist = "";

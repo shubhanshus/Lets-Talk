@@ -232,30 +232,31 @@ func postTalk(w http.ResponseWriter, req *http.Request) {
 
 	talkf := req.Form["mytalk"]
 	talk := talkf[0]
+	if u.UserName == "" {
 
+	}else{
+		talka := mytalk{
+			UserName: u.UserName,
+			Talk: talk,
+			Date: time.Now().Format("02-01-2006")+" "+time.Now().Format("15:04PM"),
+		}
+		talks = append(talks, talka);
 
-    talka := mytalk{
-		UserName: u.UserName,
-		Talk: talk,
-		Date: time.Now().Format("02-01-2006")+" "+time.Now().Format("15:04PM"),
-	}
-	talks = append(talks, talka);
-
-	log.Println(talks)
+		log.Println(talks)
 	
-	/*dont need to write file
-	val, err := json.Marshal(talks)
-	if err != nil {
-    	panic(err)
-    }
-    
-    log.Println(string(val))
+		/*dont need to write file
+		val, err := json.Marshal(talks)
+		if err != nil {
+	    	panic(err)
+	    }
+	    
+	    log.Println(string(val))
 
-    //write json file
-    jsonFile, err := os.OpenFile("json/talkList.json",os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-	jsonFile.Write(val)
-    log.Println("list written to ", jsonFile.Name())*/
-
+	    //write json file
+	    jsonFile, err := os.OpenFile("json/talkList.json",os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+		jsonFile.Write(val)
+	    log.Println("list written to ", jsonFile.Name())*/
+	}
     http.Redirect(w, req, "/", http.StatusSeeOther)
 }
 
