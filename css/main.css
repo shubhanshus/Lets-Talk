@@ -85,14 +85,15 @@ body{
     width: 400px;
     height: 20px;
 }
-.heart{
+#heart{
     width: 30px;
     height: 25px;
     margin-left: 410px;
     float: left;
 }
-#like{
+.num{
     margin-top: -18px;
+    margin-right: 30px;
     display: block;
 }
 #uname{
