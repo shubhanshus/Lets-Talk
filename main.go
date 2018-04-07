@@ -44,6 +44,8 @@ func main() {
     	panic(err)
     }
     log.Println("creating file", jsonFile)
+    //clear cookie
+
 
 }
 
