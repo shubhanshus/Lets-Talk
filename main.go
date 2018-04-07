@@ -28,10 +28,9 @@ func main() {
 	http.HandleFunc("/logout", logout)
 	http.HandleFunc("/home", home)
 	http.HandleFunc("/cancel", cancel)
-	http.HandleFunc("/follow", follow)
-
 	http.HandleFunc("/talk", postTalk)
 	http.HandleFunc("/list", showTalk)
+	http.HandleFunc("/follow", follow)
 
 	//resource path
 	http.Handle("/css/", http.StripPrefix("/css/", http.FileServer(http.Dir("css"))))
@@ -75,36 +74,6 @@ func index(w http.ResponseWriter, r *http.Request){
 		log.Print("template parsing error: ", err) // log it on terminal
 	}
 	err = tpl.Execute(w, IndexPageVars) //execute the template and pass it to index page
-	if err != nil { // if there is an error
-		log.Print("template executing error: ", err) //log it on terminal
-	}
-}
-func follow(w http.ResponseWriter, r *http.Request){
-	var FollowPageVars followVariables
-	var users []string
-	var uname string
-	for _,us := range dbUsers{
-		users = append(users, us.UserName)
-
-	}
-	if len(dbSessions)!=0{
-		u = getUser(w,r)
-		log.Println("Hello World", u.UserName)
-		uname = u.UserName
-	}else {
-		log.Println("Username Not found")
-		uname = ""
-	}
-    FollowPageVars = followVariables{ //store the date and time in a struct
-      UserName: uname,
-      UserNames: users,
-    }
-    //log.Println("uname", uname)
-	tpl, err := template.ParseFiles("templates/follow.html") //parse the html file
-	if err != nil { // if there is an error
-		log.Print("template parsing error: ", err) // log it on terminal
-	}
-	err = tpl.Execute(w, FollowPageVars) //execute the template and pass it to index page
 	if err != nil { // if there is an error
 		log.Print("template executing error: ", err) //log it on terminal
 	}
@@ -170,7 +139,7 @@ func signup(w http.ResponseWriter, req *http.Request) {
 		// get form values
 		un := req.FormValue("email")
 		p1 := req.FormValue("password1")
-		p2 := req.FormValue("password2")
+		//p2 := req.FormValue("password2")
 		f := req.FormValue("firstname")
 		l := req.FormValue("lastname")
 		// username taken?
@@ -178,11 +147,11 @@ func signup(w http.ResponseWriter, req *http.Request) {
 			http.Error(w, "Username already taken", http.StatusForbidden)
 			return
 		}
-		// compare passwords
-		if p1!=p2{
-			http.Error(w, "Both the passwords don't match", http.StatusForbidden)
-			return
-		}
+		//// compare passwords
+		//if p1!=p2{
+		//	http.Error(w, "Both the passwords don't match", http.StatusForbidden)
+		//	return
+		//}
 		// store user in dbUsers
 		bs, err := bcrypt.GenerateFromPassword([]byte(p1), bcrypt.MinCost)
 		if err != nil {
@@ -334,4 +303,19 @@ func cancel(w http.ResponseWriter, req *http.Request) {
 	}
 	http.SetCookie(w, c)
 	http.Redirect(w, req, "/", http.StatusSeeOther)
+}
+
+func follow(w http.ResponseWriter, req *http.Request) {
+
+	if !alreadyLoggedIn(w, req) {
+		http.Redirect(w, req, "/login", http.StatusSeeOther)
+		return
+	}
+	var users []user
+	for _,us:=range dbUsers{
+		users=append(users, us)
+	}
+	json.NewEncoder(w).Encode(users)
+
+
 }
