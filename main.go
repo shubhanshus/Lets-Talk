@@ -238,9 +238,10 @@ func postTalk(w http.ResponseWriter, req *http.Request) {
 
 	talkf := req.Form["mytalk"]
 	talk := talkf[0]
-	if u.UserName == "" {
-
-	}else{
+	log.Println(u.UserName)
+	if len(dbSessions)== 0{
+		
+	}else {
 		talka := mytalk{
 			UserName: u.UserName,
 			Talk: talk,
@@ -336,11 +337,13 @@ func followothers(w http.ResponseWriter, r *http.Request) {
 		log.Println("Username Not found")
 		uname = ""
 	}
+
     FollowPageVars = followVariables{ 
       UserName: uname,
       UserNames: users,
     }
-    //log.Println("uname", uname)
+    log.Println("users:", users)
+    log.Println("users map:", dbUsers)
 	tpl, err := template.ParseFiles("templates/follow.html") //parse the html file
 	if err != nil { // if there is an error
 		log.Print("template parsing error: ", err) // log it on terminal
