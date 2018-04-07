@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="/css/follow.css">
+	<script type="text/javascript" src="/js/login.js"></script>
+
+	<title>Let's Talk</title>
+</head>
+<body>
+	
+
+	<div class="photo">
+		<img src="/img/follow.jpg" height ="660px" width="700px" />
+	</div>
+
+	<div class="followdiv">
+		<h>Hi, <span id="uname">{{.UserName}}</span></h>
+		<p>Chose the one you want to follow:</p>
+		<div>
+			<form id="followform" action=""> 
+				{{range .UserNames}}
+					{{.}}: <input type="checkbox" name="email" value={{.}} /><br />
+				{{end}}
+				<input id="follow" type="submit" value="follow"> </input>
+   			</form>  
+		</div>
+
+
+	</div>
+
+</body>
+</html>

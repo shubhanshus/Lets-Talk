@@ -28,6 +28,7 @@ func main() {
 	http.HandleFunc("/logout", logout)
 	http.HandleFunc("/home", home)
 	http.HandleFunc("/cancel", cancel)
+	http.HandleFunc("/follow", follow)
 
 	http.HandleFunc("/talk", postTalk)
 	http.HandleFunc("/list", showTalk)
@@ -74,6 +75,36 @@ func index(w http.ResponseWriter, r *http.Request){
 		log.Print("template parsing error: ", err) // log it on terminal
 	}
 	err = tpl.Execute(w, IndexPageVars) //execute the template and pass it to index page
+	if err != nil { // if there is an error
+		log.Print("template executing error: ", err) //log it on terminal
+	}
+}
+func follow(w http.ResponseWriter, r *http.Request){
+	var FollowPageVars followVariables
+	var users []string
+	var uname string
+	for _,us := range dbUsers{
+		users = append(users, us.UserName)
+
+	}
+	if len(dbSessions)!=0{
+		u = getUser(w,r)
+		log.Println("Hello World", u.UserName)
+		uname = u.UserName
+	}else {
+		log.Println("Username Not found")
+		uname = ""
+	}
+    FollowPageVars = followVariables{ //store the date and time in a struct
+      UserName: uname,
+      UserNames: users,
+    }
+    //log.Println("uname", uname)
+	tpl, err := template.ParseFiles("templates/follow.html") //parse the html file
+	if err != nil { // if there is an error
+		log.Print("template parsing error: ", err) // log it on terminal
+	}
+	err = tpl.Execute(w, FollowPageVars) //execute the template and pass it to index page
 	if err != nil { // if there is an error
 		log.Print("template executing error: ", err) //log it on terminal
 	}

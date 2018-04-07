@@ -24,6 +24,10 @@ type pageVariables struct {
 	Time         string
 	UserName	 string
 }
+type followVariables struct {	
+	UserName	 string
+	UserNames	 []string  
+}
 
 type tweet struct {
 	Msg      string

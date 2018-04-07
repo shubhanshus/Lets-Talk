@@ -1,0 +1,29 @@
+.photo{
+	float: right;
+	height: 660px;
+	width: 60%;
+	text-align: right;
+}
+.followdiv{
+	text-align: center;
+	margin-top: 120px;
+	float: left;
+	margin-left: 100px;
+	font-size: 20px;
+}
+#follow{
+	height:50px;
+    width: 150px;
+    font-size: 20px;
+    background-color: #53b0fc;
+    border: none;
+    color: white;
+    text-decoration: none;
+    display: inline-block;
+    cursor: pointer;
+    box-shadow:0px 15px 10px -15px #000;
+    border-radius: 5px;
+    float: left;
+    margin-left: 80px;
+    margin-top: 50px;
+}
