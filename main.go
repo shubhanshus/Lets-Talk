@@ -7,7 +7,6 @@ import (
 	"time"
 	"log"
 	"encoding/json"
-	"os"
 	"sort"
 	"strings"
 )
@@ -42,22 +41,22 @@ func main() {
 	http.ListenAndServe(":8080", nil)
 
 	//create json file
-	jsonFile, err := os.Create("json/talkList.json")
-    if err != nil{
-    	panic(err)
-    }
-    log.Println("creating file", jsonFile)
+	//jsonFile, err := os.Create("json/talkList.json")
+	//if err != nil{
+    	//panic(err)
+	//}
+	//log.Println("creating file", jsonFile)
     //clear cookie
 
 
 }
 
-func index(w http.ResponseWriter, r *http.Request){
+func index(w http.ResponseWriter, req *http.Request){
 	var IndexPageVars pageVariables
 	var uname string
 	now := time.Now() // find the time right now
 	if len(dbSessions)!=0{
-		u = getUser(w,r)
+		u = getUser(w,req)
 		log.Println("Hello World", u.UserName)
 		uname = u.UserName
 	}else {
@@ -295,7 +294,8 @@ func cancel(w http.ResponseWriter, req *http.Request) {
 	http.SetCookie(w, c)
 	http.Redirect(w, req, "/", http.StatusSeeOther)
 }
-func cancelaccount(w http.ResponseWriter, r *http.Request){
+
+func cancelaccount(w http.ResponseWriter, req *http.Request){
 	
 	tpl, err := template.ParseFiles("templates/cancel.html") //parse the html file
 	if err != nil { // if there is an error
@@ -306,6 +306,7 @@ func cancelaccount(w http.ResponseWriter, r *http.Request){
 		log.Print("template executing error: ", err) //log it on terminal
 	}
 }
+
 func follow(w http.ResponseWriter, req *http.Request) {
 
 	if !alreadyLoggedIn(w, req) {
@@ -318,7 +319,6 @@ func follow(w http.ResponseWriter, req *http.Request) {
 	}
 	json.NewEncoder(w).Encode(users)
 }
-
 
 func followothers(w http.ResponseWriter, req *http.Request) {
 	if !alreadyLoggedIn(w, req) {
@@ -379,7 +379,6 @@ func followothers(w http.ResponseWriter, req *http.Request) {
 	}
 
 }
-
 
 func updateTweets(session session) {
 	var talks3 []mytalk

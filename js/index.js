@@ -31,7 +31,7 @@ $(function(){
 			var talklist;
 			var count = 0;
 			if(data == null){
-				talklist = "<p>There is not post.</p>";
+				talklist = "<p>There is no post.</p>";
 			}else{
 				talklist = "";
 
