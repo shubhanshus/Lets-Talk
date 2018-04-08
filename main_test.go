@@ -60,7 +60,7 @@ func  TestUserSignupCheck(t *testing.T){
 	p1:="help"
 	bs, err := bcrypt.GenerateFromPassword([]byte(p1), bcrypt.MinCost)
 	if err != nil {
-		log.Fatal(err)
+		t.Errorf("Password encryption failed")
 	}
 	var us1 =user{};
 	var user= user{
@@ -80,6 +80,32 @@ func  TestUserSignupCheck(t *testing.T){
 		if len(dbSessions)>0 ||len(dbUsers)>0{
 			t.Errorf("User deletion failed")
 		}
+	}))
+	defer ts.Close()
+
+}
+
+func  TestUserTweetCheck(t *testing.T){
+	p1:="help"
+	bs, err := bcrypt.GenerateFromPassword([]byte(p1), bcrypt.MinCost)
+	if err != nil {
+		t.Errorf("Password encryption failed")
+	}
+	var us1 =user{};
+	var user= user{
+		UserName:"jj@gmail.com",
+		First:"JJ",
+		Last:"Help",
+		Password:bs,
+	}
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		createSession(w,r,user)
+		us1=getUser(w,r)
+		if len(us1.UserName)<1{
+			t.Errorf("User addition failed")
+		}
+		dbUsers[user.UserName] = u
+
 	}))
 	defer ts.Close()
 

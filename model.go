@@ -13,7 +13,6 @@ type session struct {
 	user
 	//un           string
 	LastActivity time.Time
-	Tweets        []tweet
 	ViewingUser   string
 	FollowingUser bool
 	Following     []string
@@ -29,19 +28,19 @@ type followVariables struct {
 	UserNames	 []string  
 }
 
-type tweet struct {
-	Msg      string
-	Time     time.Time
-	UserName string
-	Id string
-}
+//type tweet struct {
+//	Msg      string
+//	Time     time.Time
+//	UserName string
+//	Id string
+//}
 
 //type F struct {
 //	Following string
 //	Follower  string
 //}
 
-type mytalk struct {
+type myTalk struct {
 	UserName	 string
 	Talk         string
 	Date         string
@@ -50,6 +49,6 @@ type mytalk struct {
 var dbUsers = map[string]user{}       // user ID, user
 var dbSessions = map[string]session{} // session ID, session
 var dbSessionsCleaned time.Time
-var dbTweets = map[string]tweet{}
-var dbmytalk = map[int]mytalk{}
-const sessionLength int = 300
+//var dbTweets = map[string]tweet{}
+var dbMyTalk = map[int]myTalk{}
+const sessionLength  = 300

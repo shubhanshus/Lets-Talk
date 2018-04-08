@@ -13,7 +13,7 @@ import (
 
 var tpl *template.Template
 var u user
-var talks []mytalk
+var talks []myTalk
 
 func init() {
 	tpl = template.Must(template.ParseGlob("templates/*"))
@@ -242,7 +242,7 @@ func postTalk(w http.ResponseWriter, req *http.Request) {
 	if len(dbSessions)== 0{
 		
 	}else {
-		talka := mytalk{
+		talka := myTalk{
 			UserName: u.UserName,
 			Talk: talk,
 			Date: time.Now().Format("02-01-2006")+" "+time.Now().Format("15:04PM"),
@@ -250,8 +250,8 @@ func postTalk(w http.ResponseWriter, req *http.Request) {
 		talks = append(talks, talka)
 
 		log.Println(talks)
-		count=len(dbmytalk)
-		dbmytalk[count]=talka
+		count=len(dbMyTalk)
+		dbMyTalk[count]=talka
 		/*dont need to write file
 		val, err := json.Marshal(talks)
 		if err != nil {
@@ -381,10 +381,10 @@ func followothers(w http.ResponseWriter, req *http.Request) {
 }
 
 func updateTweets(session session) {
-	var talks3 []mytalk
+	var talks3 []myTalk
 	log.Println("Followers:",session.Following)
 	for _,uss:= range session.Following{
-		for _,talk:=range dbmytalk{
+		for _,talk:=range dbMyTalk {
 			if talk.UserName==uss{
 				talks3=append(talks3, talk)
 			}
@@ -404,15 +404,15 @@ func updateTweets(session session) {
 }
 
 func deleteTweets(){
-	for i,talk:=range dbmytalk{
+	for i,talk:=range dbMyTalk {
 		if talk.UserName==u.UserName{
 			log.Println("inside the deletion loop")
-			delete(dbmytalk,i)
+			delete(dbMyTalk,i)
 		}
 	}
-	var talks3 []mytalk
+	var talks3 []myTalk
 	talks=talks3
-	for _,talk:=range dbmytalk{
+	for _,talk:=range dbMyTalk {
 		talks=append(talks,talk)
 		log.Println(talk)
 	}
