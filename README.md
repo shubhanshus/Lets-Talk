@@ -21,6 +21,8 @@ Store all the html pages
 Install package:
 go get -u golang.org/x/crypto/bcrypt
 
+To run test cases:
+go test -v
 
 Router:
 RESTFUL Api for post list:
@@ -48,3 +50,4 @@ Like others talks
 Additonal features:
 Share to twitter and facebook
 Follow other users
+
