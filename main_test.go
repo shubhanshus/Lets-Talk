@@ -43,7 +43,7 @@ func TestSignupChcek(t *testing.T) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	if resp.StatusCode != http.StatusSeeOther {
+	if resp.StatusCode != http.StatusOK {
 		t.Errorf("Status should be redirected, got %d", resp.StatusCode)
 	}
 	greeting, err := ioutil.ReadAll(resp.Body)
