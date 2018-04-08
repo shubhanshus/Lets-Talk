@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"log"
 	"golang.org/x/crypto/bcrypt"
+	"time"
 )
 
 func TestHealthCheckHandler(t *testing.T) {
@@ -57,7 +58,7 @@ func TestSignupChcek(t *testing.T) {
 }
 
 func  TestUserSignupCheck(t *testing.T){
-	p1:="help"
+	p1:="password"
 	bs, err := bcrypt.GenerateFromPassword([]byte(p1), bcrypt.MinCost)
 	if err != nil {
 		t.Errorf("Password encryption failed")
@@ -86,25 +87,31 @@ func  TestUserSignupCheck(t *testing.T){
 }
 
 func  TestUserTweetCheck(t *testing.T){
-	p1:="help"
+	p1:="password"
+	var count=0
 	bs, err := bcrypt.GenerateFromPassword([]byte(p1), bcrypt.MinCost)
 	if err != nil {
 		t.Errorf("Password encryption failed")
 	}
-	var us1 =user{};
 	var user= user{
 		UserName:"jj@gmail.com",
 		First:"JJ",
 		Last:"Help",
 		Password:bs,
 	}
+	var talks = myTalk{
+		UserName:user.UserName,
+		Talk:"Hello World",
+		Date:time.Now().Format("02-01-2006")+" "+time.Now().Format("15:04PM"),
+	}
+	count=len(dbMyTalk)
+	dbMyTalk[count]=talks
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		createSession(w,r,user)
-		us1=getUser(w,r)
-		if len(us1.UserName)<1{
-			t.Errorf("User addition failed")
+		deleteTweets()
+		if len(dbMyTalk)>0{
+			t.Errorf("Tweet deletion failed")
 		}
-		dbUsers[user.UserName] = u
 
 	}))
 	defer ts.Close()

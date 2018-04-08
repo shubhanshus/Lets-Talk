@@ -80,6 +80,6 @@ func createSession(w http.ResponseWriter, req *http.Request, user user) {
 	}
 	c.MaxAge = sessionLength
 	http.SetCookie(w, c)
-	dbSessions[c.Value] = session{user, time.Now(),nil,"",false,nil}
+	dbSessions[c.Value] = session{user, time.Now(),"",false,nil}
 
 }
