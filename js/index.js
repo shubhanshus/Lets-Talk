@@ -74,6 +74,12 @@ $(document).on('click', '#heart a', function (){
         count++;
         //$("#num"+likeId).val() = count;
         alert("Liked");
-		document.cookie="Count"+likeId+"="+count;
+
+        //set expire time 20 mins
+        var exp = new Date();
+		var time = exp.getTime();
+		time += 20 * 60 * 1000;
+		exp.setTime(time);
+		document.cookie="Count"+likeId+"="+count+";expires="+exp.toGMTString()+";path=/";
 });  
 

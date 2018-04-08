@@ -46,7 +46,7 @@ func main() {
     	//panic(err)
 	//}
 	//log.Println("creating file", jsonFile)
-    //clear cookie
+    
 
 
 }
@@ -77,6 +77,8 @@ func index(w http.ResponseWriter, req *http.Request){
 	if err != nil { // if there is an error
 		log.Print("template executing error: ", err) //log it on terminal
 	}
+
+
 }
 /*
 func showtweets(w http.ResponseWriter, req *http.Request) {

@@ -46,7 +46,6 @@ Post talks
 View others talks
 Like others talks
 
-
 Additonal features:
 Share to twitter and facebook
 Follow other users
