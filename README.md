@@ -60,3 +60,6 @@ Additonal features:
 Share to twitter and facebook
 Follow other users and see corresponding posts
 Encryption password
+
+
+Part2- Separate frond-end and backend
