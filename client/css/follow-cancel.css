@@ -1,0 +1,72 @@
+.photo{
+	float: right;
+	height: 660px;
+	width: 60%;
+	text-align: right;
+}
+.photo1{
+    float: right;
+    height: 660px;
+    width: 60%;
+    text-align: left;
+    float: left;
+}
+.followdiv{
+	text-align: center;
+	margin-top: 120px;
+	float: left;
+	margin-left: 100px;
+	font-size: 20px;
+}
+#follow{
+	height:50px;
+    width: 150px;
+    font-size: 20px;
+    background-color: #53b0fc;
+    border: none;
+    color: white;
+    text-decoration: none;
+    display: inline-block;
+    cursor: pointer;
+    box-shadow:0px 15px 10px -15px #000;
+    border-radius: 5px;
+    float: left;
+    margin-left: 80px;
+    margin-top: 50px;
+}
+#sure{
+    height:50px;
+    width: 300px;
+    font-size: 20px;
+    background-color: #ed6436;
+    border: none;
+    color: white;
+    text-decoration: none;
+    text-align: center;
+    padding-top: 15px;
+    display: inline-block;
+    cursor: pointer;
+    box-shadow:0px 15px 10px -15px #000;
+    border-radius: 15px;
+    float: left;
+    margin-left: 80px;
+    margin-top: 220px;
+}
+#notsure{
+    height:50px;
+    width: 300px;
+    font-size: 20px;
+    background-color: #ed6436;
+    border: none;
+    color: white;
+    text-decoration: none;
+    text-align: center;
+    padding-top: 15px;
+    display: inline-block;
+    cursor: pointer;
+    box-shadow:0px 15px 10px -15px #000;
+    border-radius: 15px;
+    float: left;
+    margin-left: 80px;
+    margin-top: 50px;
+}

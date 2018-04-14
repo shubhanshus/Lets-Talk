@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="/css/main.css">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+
+    <script type="text/javascript" src="/js/index.js"></script>
+
+    <title>Let's Talk</title>
+</head>
+<body>
+<!-- facebook plugin-->
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = 'https://connect.facebook.net/en_EN/sdk.js#xfbml=1&version=v2.12';
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+<div class="navi">
+    <img src="/img/talk.jpg" height ="80" width="160" />
+</div>
+
+<div class="title">
+    <p>Hi, <span id="uname">{{.UserName}}</span></p>
+    <h>Welcome to Let's Talk</h>
+    <div id="login"><a href="/login">Login</a></div>
+    <div id="signup"><a href="/signup">Sign-up</a></div>
+    <div id="cancel"><a href="/cancelaccount">Cancel account</a></div>
+    <div id="logout"><a href="/logout">Logout</a></div>
+    <div id="follow"><a href="/followothers">Follow others</a></div>
+    <p>Today is: {{.Date}}, the time is: {{.Time}}</p>
+</div>
+
+<center><div class="blog">
+        <div class="yourtalk">
+            <form class="talk-form"  action="/talk" method="post">
+                <textarea id="mytalk" name="mytalk" placeholder="Talk what do you want but in 100 characters."></textarea>
+                <div>
+                    <input id="talk" type="submit" value="Talk!"></input>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <h>List of talkings</h>
+
+    <div class="talklists"></div>
+
+</center>
+
+
+
+
+</body>
+<foot>
+<center>
+    <p>Created by Yingxi and Shubanshu, for distributed systems class final project.<br>Feel free to share</p>
+    <div><a href="https://twitter.com/share?ref_src=twsrc%5Etfw" class="twitter-share-button" data-show-count="false">Tweet</a><script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script></div>
+   <div class="fb-share-button" data-href="http://localhost:8080/" data-layout="button_count" data-size="small" data-mobile-iframe="true"><a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http%3A%2F%2Flocalhost%3A8080%2F&amp;src=sdkpreparse" class="fb-xfbml-parse-ignore">Share</a></div>
+
+</center>
+</foot>
+</html>
