@@ -6,7 +6,7 @@ import (
 
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
-	pb "letstalk"
+	pb "../letstalk"
 	"google.golang.org/grpc/reflection"
 )
 

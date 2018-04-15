@@ -12,7 +12,7 @@ import (
 	//"os"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
-	pb "letstalk"
+	pb "../letstalk"
 )
 
 var tpl *template.Template
@@ -59,9 +59,6 @@ func index(w http.ResponseWriter, req *http.Request){
 	var IndexPageVars pageVariables
 	var uname string
 	now := time.Now() // find the time right now
-
-	
-
 
 	if len(dbSessions)!=0{
 		u = getUser(w,req)
