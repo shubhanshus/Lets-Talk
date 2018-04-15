@@ -21,11 +21,7 @@ syntax = "proto3";
 package letstalk;
 
 
-//The signup request 
-service Signup {
-  // Sends a signup request
-  rpc SendSignup (SignupRequest) returns (SignupReply) {}
-}
+
 message SignupRequest {
   string email = 1;
   string password1 = 2;
@@ -36,12 +32,6 @@ message SignupReply {
   string message = 1;
 }
 
-//The login/logout request 
-service Login {
-  // Sends a login request
-  rpc SendLogin (LoginRequest) returns (LoginReply) {}
-  rpc SendLogout (LogoutRequest) returns (LogoutReply) {}
-}
 message LoginRequest {
   string email = 1;
   string password1 = 2;
@@ -49,6 +39,7 @@ message LoginRequest {
 message LoginReply {
   string message = 1;
 }
+
 message LogoutRequest {
   string message = 1;
 }
@@ -56,11 +47,6 @@ message LogoutReply {
   string message = 1;
 }
 
-//The cancel account request 
-service Cancel {
-  // Sends a signup request
-  rpc SendCancel (CancelRequest) returns (CancelReply) {}
-}
 message CancelRequest {
   string email = 1;
 }
@@ -68,11 +54,6 @@ message CancelReply {
   string message = 1;
 }
 
-//The follow request 
-service Follow {
-  // Sends a follow request
-  rpc SendFollow (FollowRequest) returns (FollowReply) {}
-}
 message FollowRequest {
   string email = 1;
 }
@@ -80,5 +61,26 @@ message FollowReply {
   string message = 1;
 }
 
+//The signup request
+service Signup {
+  // Sends a signup request
+  rpc SendSignup (SignupRequest) returns (SignupReply) {}
+}
+//The follow request 
+service Follow {
+  // Sends a follow request
+  rpc SendFollow (FollowRequest) returns (FollowReply) {}
+}
 
+//The login/logout request
+service Login {
+  // Sends a login request
+  rpc SendLogin (LoginRequest) returns (LoginReply) {}
+  rpc SendLogout (LogoutRequest) returns (LogoutReply) {}
+}
 
+//The cancel account request
+service Cancel {
+  // Sends a signup request
+  rpc SendCancel (CancelRequest) returns (CancelReply) {}
+}
