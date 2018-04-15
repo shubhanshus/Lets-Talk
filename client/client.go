@@ -1,39 +1,30 @@
 package main
 
 import (
-	"log"
-	"os"
-	"time"
-
-	"golang.org/x/net/context"
-	"google.golang.org/grpc"
-	pb "letstalk"
+	"net/http"	
 )
 
-const (
-	address     = "localhost:8080"
-	defaultName = "letstalk"
-)
 
 func main() {
-	// Set up a connection to the server.
-	conn, err := grpc.Dial(address, grpc.WithInsecure())
-	if err != nil {
-		log.Fatalf("did not connect: %v", err)
-	}
-	defer conn.Close()
-	c := pb.NewGreeterClient(conn)
 
-	// Contact the server and print out its response.
-	name := defaultName
-	if len(os.Args) > 1 {
-		name = os.Args[1]
-	}
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
-	defer cancel()
-	r, err := c.SayHello(ctx, &pb.HelloRequest{Name: name})
-	if err != nil {
-		log.Fatalf("could not greet: %v", err)
-	}
-	log.Printf("Greeting: %s", r.Message)
+	//setup path
+	http.HandleFunc("/", index)
+	http.HandleFunc("/login", login)
+	http.HandleFunc("/signup", signup)
+	http.HandleFunc("/logout", logout)
+	//http.HandleFunc("/home", home)
+	http.HandleFunc("/cancel", cancel)
+	http.HandleFunc("/cancelaccount", cancelaccount)
+
+	http.HandleFunc("/talk", postTalk)
+	http.HandleFunc("/list", showTalk)
+	http.HandleFunc("/follow", follow)
+	http.HandleFunc("/followothers", followothers)
+	//resource path
+	http.Handle("/css/", http.StripPrefix("/css/", http.FileServer(http.Dir("css"))))
+	http.Handle("/img/", http.StripPrefix("/img/", http.FileServer(http.Dir("img"))))
+	http.Handle("/js/", http.StripPrefix("/js/", http.FileServer(http.Dir("js"))))
+	http.Handle("/favicon.ico", http.NotFoundHandler())
+	http.ListenAndServe(":8081", nil)
+
 }

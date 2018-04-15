@@ -23,7 +23,7 @@ $(function(){
 
 	$.ajax({
         type: "GET",
-		url: 'http://localhost:8080/list',
+		url: 'http://localhost:8081/list',
 		dataType:'json',
 		contentType:"application/json",
 		success:function(data){

@@ -20,18 +20,18 @@ syntax = "proto3";
 
 package letstalk;
 
-// The greeting service definition.
-service Greeter {
-  // Sends a greeting
-  rpc SayHello (HelloRequest) returns (HelloReply) {}
-}
 
-// The request message containing the user's name.
-message HelloRequest {
-  string name = 1;
+//The signup request 
+service Signup {
+  // Sends a signup request
+  rpc SendSignup (SignupRequest) returns (SignupReply) {}
 }
-
-// The response message containing the greetings
-message HelloReply {
+message SignupRequest {
+  string email = 1;
+  string password1 = 2;
+  string firstname = 3;
+  string lastname = 4;
+}
+message SignupReply {
   string message = 1;
 }

@@ -9,6 +9,10 @@ import (
 	"encoding/json"
 	"sort"
 	"strings"
+	//"os"
+	"golang.org/x/net/context"
+	"google.golang.org/grpc"
+	pb "letstalk"
 )
 
 var tpl *template.Template
@@ -20,7 +24,7 @@ func init() {
 	dbSessionsCleaned = time.Now()
 }
 
-func main() {
+/*func main() {
 	http.HandleFunc("/", index)
 	http.HandleFunc("/login", login)
 	http.HandleFunc("/signup", signup)
@@ -49,12 +53,16 @@ func main() {
     
 
 
-}
+}*/
 
 func index(w http.ResponseWriter, req *http.Request){
 	var IndexPageVars pageVariables
 	var uname string
 	now := time.Now() // find the time right now
+
+	
+
+
 	if len(dbSessions)!=0{
 		u = getUser(w,req)
 		log.Println("Hello World", u.UserName)
@@ -167,6 +175,25 @@ func signup(w http.ResponseWriter, req *http.Request) {
 
 		dbUsers[un] = u
 
+		//dial server
+		address := "localhost:8080"
+
+		conn, err := grpc.Dial(address, grpc.WithInsecure())
+		if err != nil {
+			log.Fatalf("did not connect: %v", err)
+		}
+		defer conn.Close()
+		c := pb.NewSignupClient(conn)
+
+		// Contact the server and print out its response.
+		ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+		defer cancel()
+		r, err := c.SendSignup(ctx, &pb.SignupRequest{Email: un, Password1: p1, Firstname: f, Lastname: l})
+		if err != nil {
+			log.Fatalf("could not get: %v", err)
+		}
+
+		log.Println(r.Message)
 		// redirect
 		http.Redirect(w, req, "/", http.StatusSeeOther)
 		return
