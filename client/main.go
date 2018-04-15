@@ -18,6 +18,8 @@ import (
 var tpl *template.Template
 var u user
 var talks []myTalk
+var address = "localhost:8080"
+var userLoggedIn =false
 
 func init() {
 	tpl = template.Must(template.ParseGlob("templates/*"))
@@ -60,12 +62,11 @@ func index(w http.ResponseWriter, req *http.Request){
 	var uname string
 	now := time.Now() // find the time right now
 
-	if len(dbSessions)!=0{
-		u = getUser(w,req)
-		log.Println("Hello World", u.UserName)
-		uname = u.UserName
+	if userLoggedIn{
+		uname = getUserNew(w,req)
+		log.Println("Hello user:", uname)
 	}else {
-		log.Println("Username Not found")
+		log.Println("User not logged in")
 		uname = ""
 	}
     IndexPageVars = pageVariables{ //store the date and time in a struct
@@ -136,7 +137,11 @@ func home(w http.ResponseWriter, req *http.Request) {
 }
 */
 func signup(w http.ResponseWriter, req *http.Request) {
-	if alreadyLoggedIn(w, req) {
+	//if alreadyLoggedIn(w, req) {
+	//	http.Redirect(w, req, "/home", http.StatusSeeOther)
+	//	return
+	//}
+	if userLoggedIn{
 		http.Redirect(w, req, "/home", http.StatusSeeOther)
 		return
 	}
@@ -146,35 +151,24 @@ func signup(w http.ResponseWriter, req *http.Request) {
 		// get form values
 		un := req.FormValue("email")
 		p1 := req.FormValue("password1")
-		//p2 := req.FormValue("password2")
 		f := req.FormValue("firstname")
 		l := req.FormValue("lastname")
-		// username taken?
-		if _, ok := dbUsers[un]; ok {
-			http.Error(w, "Username already taken", http.StatusForbidden)
-			return
-		}
-		//// compare passwords
-		//if p1!=p2{
-		//	http.Error(w, "Both the passwords don't match", http.StatusForbidden)
+		//// username taken?
+		//if _, ok := dbUsers[un]; ok {
+		//	http.Error(w, "Username already taken", http.StatusForbidden)
 		//	return
 		//}
-		// store user in dbUsers
-		bs, err := bcrypt.GenerateFromPassword([]byte(p1), bcrypt.MinCost)
-		if err != nil {
-			http.Error(w, "Internal server error", http.StatusInternalServerError)
-			return
-		}
-		u = user{un, bs, f, l}
-
-		// create session
-		createSession(w,req,u)
-
-		dbUsers[un] = u
-
-		//dial server
-		address := "localhost:8080"
-
+		//// store user in dbUsers
+		//bs, err := bcrypt.GenerateFromPassword([]byte(p1), bcrypt.MinCost)
+		//if err != nil {
+		//	http.Error(w, "Internal server error", http.StatusInternalServerError)
+		//	return
+		//}
+		//u = user{un, bs, f, l}
+		//
+		//dbUsers[un] = u
+		////dial server
+		////address := "localhost:8080"
 		conn, err := grpc.Dial(address, grpc.WithInsecure())
 		if err != nil {
 			log.Fatalf("did not connect: %v", err)
@@ -187,9 +181,12 @@ func signup(w http.ResponseWriter, req *http.Request) {
 		defer cancel()
 		r, err := c.SendSignup(ctx, &pb.SignupRequest{Email: un, Password1: p1, Firstname: f, Lastname: l})
 		if err != nil {
-			log.Fatalf("could not get: %v", err)
+			http.Error(w, r.Message, http.StatusForbidden)
+			return
 		}
-
+		// create cookie
+		createCookie(r.Sessionid,u,w)
+		userLoggedIn=true
 		log.Println(r.Message)
 		// redirect
 		http.Redirect(w, req, "/", http.StatusSeeOther)

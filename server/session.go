@@ -5,7 +5,6 @@ import (
 "github.com/satori/go.uuid"
 "net/http"
 "time"
-	"log"
 )
 
 func getUser(w http.ResponseWriter, req *http.Request) user {
@@ -83,23 +82,4 @@ func createSession(w http.ResponseWriter, req *http.Request, user user) {
 	http.SetCookie(w, c)
 	dbSessions[c.Value] = session{user, time.Now(),"",false,nil}
 
-}
-
-func createCookie(sID string, user user,w http.ResponseWriter) {
-
-	c := &http.Cookie{
-		Name:  "session",
-		Value: sID,
-	}
-	c.MaxAge = sessionLength
-	http.SetCookie(w, c)
-	//dbSessions[c.Value] = session{user, time.Now(),"",false,nil}
-
-}
-
-func getUserNew(w http.ResponseWriter, req *http.Request) (string){
-	//var name string
-	cookie, _ := req.Cookie("session")
-	log.Println(cookie)
-	return cookie.Value
 }
