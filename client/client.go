@@ -2,11 +2,12 @@ package main
 
 import (
 	"log"
-    "os"
+	"os"
+	"time"
 
-    pb "../letstalk"
-    "golang.org/x/net/context"
-    "google.golang.org/grpc"
+	"golang.org/x/net/context"
+	"google.golang.org/grpc"
+	pb "google.golang.org/grpc/examples/helloworld/helloworld"
 )
 
 const (
