@@ -149,7 +149,7 @@ func login(w http.ResponseWriter, req *http.Request) {
 
 func logout(w http.ResponseWriter, req *http.Request) {
 
-	log.Println(un)
+	log.Println("inside logout func")
 	
 	//dial server
 	conn2, err := grpc.Dial(address, grpc.WithInsecure())
@@ -158,13 +158,14 @@ func logout(w http.ResponseWriter, req *http.Request) {
 	}
 	defer conn2.Close()
 	c2 := pb.NewLetstalkClient(conn2)
-
+	log.Printf("connection established")
 	// Contact the server and print out its response.
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 	r, err := c2.SendLogout(ctx, &pb.LogoutRequest{Email: un})
 	if err != nil {
-		http.Error(w, r.Message, http.StatusForbidden)
+		log.Println(r.Message,"  ",err)
+		//http.Error(w, r.Message, http.StatusForbidden)
 		return
 	}
 	log.Println(u.UserName, r.Message)

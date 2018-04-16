@@ -34,13 +34,15 @@ func (s *server) SendSignup(ctx context.Context, in *pb.SignupRequest) (*pb.Sign
 		Last:in.Lastname,
 		Password:bs,
 	}
+	log.Printf(" ",u.UserName,u.First)
 	if _, ok := dbUsers[in.Email]; ok {
 		return &pb.SignupReply{Message: "User Exists" + in.Email}, errors.New("user already exists")
 	}
-
+	log.Printf("user does not exist")
 	dbUsers[in.Email] = u
 	//sID, _ := uuid.NewV4()
 	dbSessions[in.Email]=session{u, time.Now(),"",false,nil}
+	log.Println("user addition successful")
 	return &pb.SignupReply{Message: "Signup succeed:" + in.Email, Sessionid:in.Email}, nil
 }
 // login request
@@ -62,8 +64,8 @@ func (s *server) SendLogout(ctx context.Context, in *pb.LogoutRequest) (*pb.Logo
 		go cleanSessions()
 	}
 
-	return &pb.LogoutReply{Message: "User logout:" + in.Email}, errors.New("There is no user")
-
+	delete(dbSessions,in.Email)
+	return &pb.LogoutReply{}, nil
 }
 
 // cancel account request
