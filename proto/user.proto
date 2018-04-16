@@ -39,6 +39,7 @@ message LoginRequest {
 }
 message LoginReply {
   string message = 1;
+  string sessionId=2;
 }
 
 message LogoutRequest {

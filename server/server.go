@@ -47,8 +47,19 @@ func (s *server) SendSignup(ctx context.Context, in *pb.SignupRequest) (*pb.Sign
 }
 // login request
 func (s *server) SendLogin(ctx context.Context, in *pb.LoginRequest) (*pb.LoginReply, error) {
-		
 
+	u, ok := dbUsers[in.Email]
+	if !ok {
+		log.Println(u)
+		log.Println(dbUsers)
+		return &pb.LoginReply{Message: "User Not found" + in.Email}, errors.New("user does not exist")
+	}
+	// does the entered password match the stored password?
+	err := bcrypt.CompareHashAndPassword(u.Password, []byte(in.Password1))
+	if err != nil {
+		return &pb.LoginReply{Message: "username/password does not match" + in.Email}, errors.New("username/password does not match")
+	}
+	dbSessions[in.Email]=session{u, time.Now(),"",false,nil}
 	return &pb.LoginReply{Message: "SendLogin return:" + in.Email}, nil
 
 

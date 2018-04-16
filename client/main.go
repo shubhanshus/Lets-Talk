@@ -1,7 +1,6 @@
 package main
 
 import (
-	"golang.org/x/crypto/bcrypt"
 	"html/template"
 	"net/http"
 	"time"
@@ -121,25 +120,48 @@ func login(w http.ResponseWriter, req *http.Request) {
 		http.Redirect(w, req, "/index", http.StatusSeeOther)
 		return
 	}*/
+	if userLoggedIn{
+		http.Redirect(w, req, "/home", http.StatusSeeOther)
+		return
+	}
+
 	var u user
 	// process form submission
 	if req.Method == http.MethodPost {
 		un := req.FormValue("name")
 		p := req.FormValue("password")
 		// is there a username?
-		u, ok := dbUsers[un]
-		if !ok {
-			log.Println(un)
-			log.Println(dbUsers)
-			http.Error(w, "Username not found", http.StatusForbidden)
-			return
-		}
-		// does the entered password match the stored password?
-		err := bcrypt.CompareHashAndPassword(u.Password, []byte(p))
+
+		conn, err := grpc.Dial(address, grpc.WithInsecure())
 		if err != nil {
-			http.Error(w, "Username and/or password do not match", http.StatusForbidden)
+			log.Fatalf("did not connect: %v", err)
+		}
+		defer conn.Close()
+		c := pb.NewLetstalkClient(conn)
+
+		ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+		defer cancel()
+		r, err := c.SendLogin(ctx, &pb.LoginRequest{Email:un,Password1:p})
+		if err != nil {
+			http.Error(w, r.Message, http.StatusForbidden)
 			return
 		}
+		createCookie(r.SessionId,w)
+		userLoggedIn=true
+
+		//u, ok := dbUsers[un]
+		//if !ok {
+		//	log.Println(un)
+		//	log.Println(dbUsers)
+		//	http.Error(w, "Username not found", http.StatusForbidden)
+		//	return
+		//}
+		//// does the entered password match the stored password?
+		//err := bcrypt.CompareHashAndPassword(u.Password, []byte(p))
+		//if err != nil {
+		//	http.Error(w, "Username and/or password do not match", http.StatusForbidden)
+		//	return
+		//}
 		http.Redirect(w, req, "/", http.StatusSeeOther)
 		return
 	}
@@ -148,9 +170,11 @@ func login(w http.ResponseWriter, req *http.Request) {
 }
 
 func logout(w http.ResponseWriter, req *http.Request) {
-
-	log.Println("inside logout func")
-	
+	if !userLoggedIn{
+		http.Redirect(w, req, "/home", http.StatusSeeOther)
+		return
+	}
+	cookie, _ := req.Cookie("session")
 	//dial server
 	conn2, err := grpc.Dial(address, grpc.WithInsecure())
 	if err != nil {
@@ -158,18 +182,24 @@ func logout(w http.ResponseWriter, req *http.Request) {
 	}
 	defer conn2.Close()
 	c2 := pb.NewLetstalkClient(conn2)
-	log.Printf("connection established")
+	//log.Printf("connection established")
 	// Contact the server and print out its response.
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 	r, err := c2.SendLogout(ctx, &pb.LogoutRequest{Email: un})
 	if err != nil {
-		log.Println(r.Message,"  ",err)
-		//http.Error(w, r.Message, http.StatusForbidden)
+		//log.Println(r.Message,"  ",err)
+		http.Error(w, r.Message, http.StatusForbidden)
 		return
 	}
 	log.Println(u.UserName, r.Message)
-	
+	cookie = &http.Cookie{
+		Name:   "session",
+		Value:  "",
+		MaxAge: -1,
+	}
+	http.SetCookie(w, cookie)
+	userLoggedIn=false
 	http.Redirect(w, req, "/login", http.StatusSeeOther)
 }
 

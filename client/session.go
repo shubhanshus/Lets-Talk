@@ -85,7 +85,7 @@ func createSession(w http.ResponseWriter, req *http.Request, user user) {
 
 }
 
-func createCookie(sID string, user user,w http.ResponseWriter) {
+func createCookie(sID string,w http.ResponseWriter) {
 
 	c := &http.Cookie{
 		Name:  "session",
