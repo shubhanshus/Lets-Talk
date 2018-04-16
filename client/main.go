@@ -30,9 +30,9 @@ func index(w http.ResponseWriter, req *http.Request){
 	var IndexPageVars pageVariables
 	var uname string
 	now := time.Now() // find the time right now
-
+	un = ""
 	if userLoggedIn{
-		uname = "test"
+		uname = "there"
 		log.Println("Hello user:", uname)
 	}else {
 		log.Println("User not logged in")
@@ -72,23 +72,7 @@ func signup(w http.ResponseWriter, req *http.Request) {
 		p1 := req.FormValue("password1")
 		f := req.FormValue("firstname")
 		l := req.FormValue("lastname")
-		//// username taken?
-		//if _, ok := dbUsers[un]; ok {
-		//	http.Error(w, "Username already taken", http.StatusForbidden)
-		//	return
-		//}
-		//// store user in dbUsers
-		//bs, err := bcrypt.GenerateFromPassword([]byte(p1), bcrypt.MinCost)
-		//if err != nil {
-		//	http.Error(w, "Internal server error", http.StatusInternalServerError)
-		//	return
-		//}
-		//u = user{un, bs, f, l}
-		//
-		//dbUsers[un] = u
-		////dial server
-		////address := "localhost:8080"
-
+		
 		//dial server
 		conn, err := grpc.Dial(address, grpc.WithInsecure())
 		if err != nil {
@@ -105,12 +89,19 @@ func signup(w http.ResponseWriter, req *http.Request) {
 			http.Error(w, r.Message, http.StatusForbidden)
 			return
 		}
-		un = r.Message
+
 		userLoggedIn=true
 		log.Println(r.Message)
-		// redirect
-		http.Redirect(w, req, "/", http.StatusSeeOther)
-		return
+		if(r.Message == "User Exists"){
+			http.Error(w, "Username already taken", http.StatusForbidden)
+			return
+		}else{
+			// redirect
+			un = r.Message
+			http.Redirect(w, req, "/", http.StatusSeeOther)
+			return
+		}
+		
 	}
 	tpl.ExecuteTemplate(w, "signup.html", u)
 }
@@ -146,6 +137,7 @@ func login(w http.ResponseWriter, req *http.Request) {
 			http.Error(w, r.Message, http.StatusForbidden)
 			return
 		}
+		
 		createCookie(r.SessionId,w)
 		userLoggedIn=true
 
@@ -162,6 +154,18 @@ func login(w http.ResponseWriter, req *http.Request) {
 		//	http.Error(w, "Username and/or password do not match", http.StatusForbidden)
 		//	return
 		//}
+		if(r.Message == "User Not found"){
+			http.Error(w, "User Not found", http.StatusForbidden)
+			return
+		}else if(r.Message == "username/password does not match"){
+			http.Error(w, "username/password does not match", http.StatusForbidden)
+			return
+		}else{
+			// redirect
+			un = r.Message
+			http.Redirect(w, req, "/", http.StatusSeeOther)
+			return
+		}
 		http.Redirect(w, req, "/", http.StatusSeeOther)
 		return
 	}
@@ -176,17 +180,17 @@ func logout(w http.ResponseWriter, req *http.Request) {
 	}
 	cookie, _ := req.Cookie("session")
 	//dial server
-	conn2, err := grpc.Dial(address, grpc.WithInsecure())
+	conn, err := grpc.Dial(address, grpc.WithInsecure())
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)
 	}
-	defer conn2.Close()
-	c2 := pb.NewLetstalkClient(conn2)
+	defer conn.Close()
+	c := pb.NewLetstalkClient(conn)
 	//log.Printf("connection established")
 	// Contact the server and print out its response.
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
-	r, err := c2.SendLogout(ctx, &pb.LogoutRequest{Email: un})
+	r, err := c.SendLogout(ctx, &pb.LogoutRequest{Email: un})
 	if err != nil {
 		//log.Println(r.Message,"  ",err)
 		http.Error(w, r.Message, http.StatusForbidden)
@@ -206,6 +210,45 @@ func logout(w http.ResponseWriter, req *http.Request) {
 func postTalk(w http.ResponseWriter, req *http.Request) {
 	
 	
+    count:=0
+	log.Println("method:", req.Method) //get request method
+	req.ParseForm()
+
+	talkf := req.Form["mytalk"]
+	talk := talkf[0]
+	log.Println(u.UserName)
+	if len(dbSessions)== 0{
+		
+	}else {
+		talka := myTalk{
+			UserName: u.UserName,
+			Talk: talk,
+			Date: time.Now().Format("02-01-2006")+" "+time.Now().Format("15:04PM"),
+		}
+		//dial server
+		conn, err := grpc.Dial(address, grpc.WithInsecure())
+		if err != nil {
+			log.Fatalf("did not connect: %v", err)
+		}
+		defer conn.Close()
+		c := pb.NewLetstalkClient(conn)
+
+		// Contact the server and print out its response.
+		ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+		defer cancel()
+		r, err := c.SendTalk(ctx, &pb.TalkRequest{Email: talka.UserName, Talk: talka.Talk, Date: talka.Date})
+		if err != nil {
+			http.Error(w, "", http.StatusForbidden)
+			return
+		}
+
+
+
+		log.Println(r.Talk)
+		count=len(dbMyTalk)
+		dbMyTalk[count]=talka
+		
+	}
     http.Redirect(w, req, "/", http.StatusSeeOther)
 }
 
@@ -217,7 +260,24 @@ func showTalk(w http.ResponseWriter, req *http.Request) {
 }
 
 func cancel(w http.ResponseWriter, req *http.Request) {
-	
+
+	//dial server
+	conn, err := grpc.Dial(address, grpc.WithInsecure())
+	if err != nil {
+		log.Fatalf("did not connect: %v", err)
+	}
+	defer conn.Close()
+	c := pb.NewLetstalkClient(conn)
+
+	// Contact the server and print out its response.
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+	r, err := c.SendCancel(ctx, &pb.CancelRequest{Email: ""})
+	if err != nil {
+		http.Error(w, r.Message, http.StatusForbidden)
+		return
+	}
+
 	http.Redirect(w, req, "/", http.StatusSeeOther)
 }
 
@@ -235,11 +295,72 @@ func cancelaccount(w http.ResponseWriter, req *http.Request){
 }
 
 func follow(w http.ResponseWriter, req *http.Request) {
-
+	if !alreadyLoggedIn(w, req) {
+		http.Redirect(w, req, "/login", http.StatusSeeOther)
+		return
+	}
+	var users []user
+	for _,us:=range dbUsers{
+		users=append(users, us)
+	}
+	json.NewEncoder(w).Encode(users)
 }
 
 func followothers(w http.ResponseWriter, req *http.Request) {
 	
+	var FollowPageVars followVariables
+	var uname string
+	var users []string
+	for _,us:=range dbUsers{
+		users=append(users, us.UserName)
+	}
+
+	if len(dbSessions)!=0{
+		u = getUser(w,req)
+		log.Println("Hello ", u.UserName)
+		uname = u.UserName
+	}else {
+		log.Println("Username Not found")
+		uname = ""
+	}
+
+	FollowPageVars = followVariables{
+		UserName: uname,
+		UserNames: users,
+	}
+	//log.Println("users:", users)
+	//log.Println("users map:", dbUsers)
+
+
+	if req.Method == http.MethodPost {
+		var ud []string
+		req.ParseForm()
+		log.Println(req.Form)
+		c, _ := req.Cookie("session")
+		log.Println("------------------------follow function------------")
+		for key, values := range req.Form {   // range over map
+			for _, value := range values {    // range over []string
+				log.Println(key, value)
+				log.Println(c.Value)
+				ud=append(ud, value)
+			}
+		}
+		var session = dbSessions[c.Value]
+		session.Following=ud
+		updateTweets(session)
+		http.Redirect(w, req, "/", http.StatusSeeOther)
+		return
+	}else{
+		tpl, err := template.ParseFiles("templates/follow.html") //parse the html file
+		if err != nil { // if there is an error
+			log.Print("template parsing error: ", err) // log it on terminal
+		}
+		err = tpl.Execute(w, FollowPageVars) //execute the template and pass it to index page
+		if err != nil { // if there is an error
+			log.Print("template executing error: ", err) //log it on terminal
+		}
+	}
+
 
 }
 

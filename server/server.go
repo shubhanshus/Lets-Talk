@@ -10,7 +10,6 @@ import (
 	"google.golang.org/grpc/reflection"
 	"golang.org/x/crypto/bcrypt"
 	"time"
-	"errors"
 )
 
 const (
@@ -36,14 +35,14 @@ func (s *server) SendSignup(ctx context.Context, in *pb.SignupRequest) (*pb.Sign
 	}
 	log.Printf(" ",u.UserName,u.First)
 	if _, ok := dbUsers[in.Email]; ok {
-		return &pb.SignupReply{Message: "User Exists" + in.Email}, errors.New("user already exists")
+		return &pb.SignupReply{Message: "User Exists" + in.Email}, nil
 	}
 	log.Printf("user does not exist")
 	dbUsers[in.Email] = u
 	//sID, _ := uuid.NewV4()
 	dbSessions[in.Email]=session{u, time.Now(),"",false,nil}
 	log.Println("user addition successful")
-	return &pb.SignupReply{Message: "Signup succeed:" + in.Email, Sessionid:in.Email}, nil
+	return &pb.SignupReply{Message:in.Email, Sessionid:in.Email}, nil
 }
 // login request
 func (s *server) SendLogin(ctx context.Context, in *pb.LoginRequest) (*pb.LoginReply, error) {
@@ -52,12 +51,12 @@ func (s *server) SendLogin(ctx context.Context, in *pb.LoginRequest) (*pb.LoginR
 	if !ok {
 		log.Println(u)
 		log.Println(dbUsers)
-		return &pb.LoginReply{Message: "User Not found" + in.Email}, errors.New("user does not exist")
+		return &pb.LoginReply{Message: "User Not found" + in.Email}, nil
 	}
 	// does the entered password match the stored password?
 	err := bcrypt.CompareHashAndPassword(u.Password, []byte(in.Password1))
 	if err != nil {
-		return &pb.LoginReply{Message: "username/password does not match" + in.Email}, errors.New("username/password does not match")
+		return &pb.LoginReply{Message: "username/password does not match" + in.Email}, nil
 	}
 	dbSessions[in.Email]=session{u, time.Now(),"",false,nil}
 	return &pb.LoginReply{Message: "SendLogin return:" + in.Email}, nil
@@ -90,6 +89,13 @@ func (s *server) SendCancel(ctx context.Context, in *pb.CancelRequest) (*pb.Canc
 func (s *server) SendFollow(ctx context.Context, in *pb.FollowRequest) (*pb.FollowReply, error) {
 	
 	return &pb.FollowReply{Message: "SendFollow return:" + in.Email}, nil
+
+}
+
+// talk  request
+func (s *server) SendTalk(ctx context.Context, in *pb.TalkRequest) (*pb.TalkReply, error) {
+	
+	return &pb.TalkReply{Email: "SendTalk return:" + in.Email}, nil
 
 }
 

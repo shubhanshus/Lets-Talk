@@ -63,6 +63,18 @@ message FollowReply {
   string message = 1;
 }
 
+message TalkRequest {
+  string email = 1;
+  string talk = 2;
+  string date = 3;
+}
+message TalkReply {
+  string email = 1;
+  string talk = 2;
+  string date = 3;
+}
+
+
 //The signup request
 service Letstalk {
   // Sends a signup request
@@ -79,5 +91,8 @@ service Letstalk {
 
   // Sends a follow request
   rpc SendFollow (FollowRequest) returns (FollowReply) {}
+
+  // Sends a talk request
+  rpc SendTalk (TalkRequest) returns (TalkReply) {}
 
 }
