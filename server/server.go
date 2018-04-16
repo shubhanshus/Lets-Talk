@@ -43,6 +43,42 @@ func (s *server) SendSignup(ctx context.Context, in *pb.SignupRequest) (*pb.Sign
 	dbSessions[in.Email]=session{u, time.Now(),"",false,nil}
 	return &pb.SignupReply{Message: "Signup succeed:" + in.Email, Sessionid:in.Email}, nil
 }
+// login request
+func (s *server) SendLogin(ctx context.Context, in *pb.LoginRequest) (*pb.LoginReply, error) {
+		
+
+	return &pb.LoginReply{Message: "SendLogin return:" + in.Email}, nil
+
+
+}
+
+// SendLogout implements logout request
+func (s *server) SendLogout(ctx context.Context, in *pb.LogoutRequest) (*pb.LogoutReply, error) {
+	log.Println(in.Email)
+
+	
+	// clean up dbSessions
+	if time.Now().Sub(dbSessionsCleaned) > (time.Second * 600) {
+		go cleanSessions()
+	}
+
+	return &pb.LogoutReply{Message: "User logout:" + in.Email}, errors.New("There is no user")
+
+}
+
+// cancel account request
+func (s *server) SendCancel(ctx context.Context, in *pb.CancelRequest) (*pb.CancelReply, error) {
+	
+	return &pb.CancelReply{Message: "SendCancel return:" + in.Email}, nil
+
+}
+
+// follow  request
+func (s *server) SendFollow(ctx context.Context, in *pb.FollowRequest) (*pb.FollowReply, error) {
+	
+	return &pb.FollowReply{Message: "SendFollow return:" + in.Email}, nil
+
+}
 
 func main() {
 	lis, err := net.Listen("tcp", port)
@@ -51,7 +87,7 @@ func main() {
 	}
 	s := grpc.NewServer()
 	log.Printf("server created")
-	pb.RegisterSignupServer(s, &server{})
+	pb.RegisterLetstalkServer(s, &server{})
 	// Register reflection service on gRPC server.
 	reflection.Register(s)
 	if err := s.Serve(lis); err != nil {

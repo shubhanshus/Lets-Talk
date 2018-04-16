@@ -42,7 +42,7 @@ message LoginReply {
 }
 
 message LogoutRequest {
-  string message = 1;
+  string email = 1;
 }
 message LogoutReply {
   string message = 1;
@@ -63,25 +63,20 @@ message FollowReply {
 }
 
 //The signup request
-service Signup {
+service Letstalk {
   // Sends a signup request
   rpc SendSignup (SignupRequest) returns (SignupReply) {}
-}
-//The follow request 
-service Follow {
-  // Sends a follow request
-  rpc SendFollow (FollowRequest) returns (FollowReply) {}
-}
 
-//The login/logout request
-service Login {
   // Sends a login request
   rpc SendLogin (LoginRequest) returns (LoginReply) {}
-  rpc SendLogout (LogoutRequest) returns (LogoutReply) {}
-}
 
-//The cancel account request
-service Cancel {
-  // Sends a signup request
+  // Sends a logout request
+  rpc SendLogout (LogoutRequest) returns (LogoutReply) {}
+
+  // Sends a cancel request
   rpc SendCancel (CancelRequest) returns (CancelReply) {}
+
+  // Sends a follow request
+  rpc SendFollow (FollowRequest) returns (FollowReply) {}
+
 }
