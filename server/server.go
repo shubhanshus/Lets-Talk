@@ -10,6 +10,7 @@ import (
 	"google.golang.org/grpc/reflection"
 	"golang.org/x/crypto/bcrypt"
 	"time"
+	"errors"
 )
 
 const (
@@ -33,11 +34,11 @@ func (s *server) SendSignup(ctx context.Context, in *pb.SignupRequest) (*pb.Sign
 		Last:in.Lastname,
 		Password:bs,
 	}
-	log.Printf(" ",u.UserName,u.First)
+	//log.Printf(" ",u.UserName,u.First)
 	if _, ok := dbUsers[in.Email]; ok {
-		return &pb.SignupReply{Message: "User Exists" + in.Email}, nil
+		return &pb.SignupReply{Message: "User Exists" + in.Email}, errors.New("user already exists")
 	}
-	log.Printf("user does not exist")
+	//log.Printf("user does not exist")
 	dbUsers[in.Email] = u
 	//sID, _ := uuid.NewV4()
 	dbSessions[in.Email]=session{u, time.Now(),"",false,nil}
@@ -51,12 +52,12 @@ func (s *server) SendLogin(ctx context.Context, in *pb.LoginRequest) (*pb.LoginR
 	if !ok {
 		log.Println(u)
 		log.Println(dbUsers)
-		return &pb.LoginReply{Message: "User Not found" + in.Email}, nil
+		return &pb.LoginReply{}, errors.New("user does not exist")
 	}
 	// does the entered password match the stored password?
 	err := bcrypt.CompareHashAndPassword(u.Password, []byte(in.Password1))
 	if err != nil {
-		return &pb.LoginReply{Message: "username/password does not match" + in.Email}, nil
+		return &pb.LoginReply{Message: "username/password does not match"}, errors.New("username/password does not match")
 	}
 	dbSessions[in.Email]=session{u, time.Now(),"",false,nil}
 	return &pb.LoginReply{Message: "SendLogin return:" + in.Email}, nil

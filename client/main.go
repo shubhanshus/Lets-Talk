@@ -30,9 +30,8 @@ func index(w http.ResponseWriter, req *http.Request){
 	var IndexPageVars pageVariables
 	var uname string
 	now := time.Now() // find the time right now
-	un = ""
 	if userLoggedIn{
-		uname = "there"
+		uname = u.UserName
 		log.Println("Hello user:", uname)
 	}else {
 		log.Println("User not logged in")
@@ -86,21 +85,16 @@ func signup(w http.ResponseWriter, req *http.Request) {
 		defer cancel()
 		r, err := c.SendSignup(ctx, &pb.SignupRequest{Email: un, Password1: p1, Firstname: f, Lastname: l})
 		if err != nil {
-			http.Error(w, r.Message, http.StatusForbidden)
-			return
+			errMsg:= err.Error()
+			errMsg=errMsg[33:len(errMsg)]
+			http.Error(w, errMsg , http.StatusForbidden)
 		}
 
 		userLoggedIn=true
 		log.Println(r.Message)
-		if(r.Message == "User Exists"){
-			http.Error(w, "Username already taken", http.StatusForbidden)
-			return
-		}else{
-			// redirect
-			un = r.Message
-			http.Redirect(w, req, "/", http.StatusSeeOther)
-			return
-		}
+		u.UserName = r.Message
+		http.Redirect(w, req, "/", http.StatusSeeOther)
+		return
 		
 	}
 	tpl.ExecuteTemplate(w, "signup.html", u)
@@ -134,7 +128,9 @@ func login(w http.ResponseWriter, req *http.Request) {
 		defer cancel()
 		r, err := c.SendLogin(ctx, &pb.LoginRequest{Email:un,Password1:p})
 		if err != nil {
-			http.Error(w, r.Message, http.StatusForbidden)
+			errMsg:= err.Error()
+			errMsg=errMsg[33:len(errMsg)]
+			http.Error(w, errMsg , http.StatusForbidden)
 			return
 		}
 		
@@ -193,8 +189,9 @@ func logout(w http.ResponseWriter, req *http.Request) {
 	r, err := c.SendLogout(ctx, &pb.LogoutRequest{Email: un})
 	if err != nil {
 		//log.Println(r.Message,"  ",err)
-		http.Error(w, r.Message, http.StatusForbidden)
-		return
+		errMsg:= err.Error()
+		errMsg=errMsg[33:len(errMsg)]
+		http.Error(w, errMsg , http.StatusForbidden)
 	}
 	log.Println(u.UserName, r.Message)
 	cookie = &http.Cookie{
@@ -238,12 +235,10 @@ func postTalk(w http.ResponseWriter, req *http.Request) {
 		defer cancel()
 		r, err := c.SendTalk(ctx, &pb.TalkRequest{Email: talka.UserName, Talk: talka.Talk, Date: talka.Date})
 		if err != nil {
-			http.Error(w, "", http.StatusForbidden)
-			return
+			errMsg:= err.Error()
+			errMsg=errMsg[33:len(errMsg)]
+			http.Error(w, errMsg , http.StatusForbidden)
 		}
-
-
-
 		log.Println(r.Talk)
 		count=len(dbMyTalk)
 		dbMyTalk[count]=talka
