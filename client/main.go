@@ -56,10 +56,7 @@ func index(w http.ResponseWriter, req *http.Request){
 }
 
 func signup(w http.ResponseWriter, req *http.Request) {
-	//if alreadyLoggedIn(w, req) {
-	//	http.Redirect(w, req, "/home", http.StatusSeeOther)
-	//	return
-	//}
+
 	if userLoggedIn{
 		http.Redirect(w, req, "/", http.StatusSeeOther)
 		return
@@ -83,7 +80,12 @@ func signup(w http.ResponseWriter, req *http.Request) {
 		// Contact the server and print out its response.
 		ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 		defer cancel()
-		r, err := c.SendSignup(ctx, &pb.SignupRequest{Email: un, Password1: p1, Firstname: f, Lastname: l})
+		var user pb.User;
+		user.Email= un
+		user.Password1=p1
+		user.Lastname=l
+		user.Firstname=f
+		r, err := c.SendSignup(ctx, &pb.SignupRequest{User:&user})
 		if err != nil {
 			errMsg:= err.Error()
 			errMsg=errMsg[33:len(errMsg)]
@@ -102,10 +104,7 @@ func signup(w http.ResponseWriter, req *http.Request) {
 }
 
 func login(w http.ResponseWriter, req *http.Request) {
-	/*if alreadyLoggedIn(w, req) {
-		http.Redirect(w, req, "/index", http.StatusSeeOther)
-		return
-	}*/
+
 	if userLoggedIn{
 		http.Redirect(w, req, "/home", http.StatusSeeOther)
 		return
@@ -196,21 +195,22 @@ func logout(w http.ResponseWriter, req *http.Request) {
 }
 
 func postTalk(w http.ResponseWriter, req *http.Request) {
-	count:=0
+	if !userLoggedIn{
+		http.Redirect(w, req, "/home", http.StatusSeeOther)
+		return
+	}
+	//count:=0
+	var talk1 pb.Talk
 	log.Println("method:", req.Method) //get request method
 	req.ParseForm()
-
 	talkf := req.Form["mytalk"]
 	talk := talkf[0]
+	talk1.Talk=talk
+	talk1.Email=u.UserName
+	talk1.Date=time.Now().Format("02-01-2006")+" "+time.Now().Format("15:04PM")
 	log.Println(u.UserName)
-	if len(dbSessions)== 0{
-		
-	}else {
-		talka := myTalk{
-			UserName: u.UserName,
-			Talk: talk,
-			Date: time.Now().Format("02-01-2006")+" "+time.Now().Format("15:04PM"),
-		}
+	if req.Method == http.MethodPost {
+
 		//dial server
 		conn, err := grpc.Dial(address, grpc.WithInsecure())
 		if err != nil {
@@ -222,17 +222,15 @@ func postTalk(w http.ResponseWriter, req *http.Request) {
 		// Contact the server and print out its response.
 		ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 		defer cancel()
-		r, err := c.SendTalk(ctx, &pb.TalkRequest{Email: talka.UserName, Talk: talka.Talk, Date: talka.Date})
+		r, err := c.SendTalk(ctx, &pb.TalkRequest{Talk: &talk1})
 		if err != nil {
 			errMsg:= err.Error()
 			errMsg=errMsg[33:len(errMsg)]
 			http.Error(w, errMsg , http.StatusForbidden)
 			return
 		}
-		log.Println(r.Talk)
-		count=len(dbMyTalk)
-		dbMyTalk[count]=talka
-		
+		log.Println(r.Message)
+		//log.Println(r.Talk)
 	}
     http.Redirect(w, req, "/", http.StatusSeeOther)
 }
@@ -262,12 +260,22 @@ func cancel(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, r.Message, http.StatusForbidden)
 		return
 	}
-
+	cookie, _ := req.Cookie("session")
+	cookie = &http.Cookie{
+		Name:   "session",
+		Value:  "",
+		MaxAge: -1,
+	}
+	http.SetCookie(w, cookie)
+	userLoggedIn=false
 	http.Redirect(w, req, "/", http.StatusSeeOther)
 }
 
 func cancelaccount(w http.ResponseWriter, req *http.Request){
-	
+	if !userLoggedIn{
+		http.Redirect(w, req, "/home", http.StatusSeeOther)
+		return
+	}
 	tpl, err := template.ParseFiles("templates/cancel.html") //parse the html file
 	if err != nil { // if there is an error
 		log.Print("template parsing error: ", err) // log it on terminal
@@ -292,7 +300,10 @@ func follow(w http.ResponseWriter, req *http.Request) {
 }
 
 func followothers(w http.ResponseWriter, req *http.Request) {
-	
+	if !userLoggedIn{
+		http.Redirect(w, req, "/home", http.StatusSeeOther)
+		return
+	}
 	var FollowPageVars followVariables
 	var uname string
 	var users []string
@@ -300,9 +311,7 @@ func followothers(w http.ResponseWriter, req *http.Request) {
 		users=append(users, us.UserName)
 	}
 
-	if len(dbSessions)!=0{
-		u = getUser(w,req)
-		log.Println("Hello ", u.UserName)
+	if userLoggedIn{
 		uname = u.UserName
 	}else {
 		log.Println("Username Not found")

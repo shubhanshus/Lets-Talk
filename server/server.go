@@ -17,33 +17,35 @@ const (
 	port = ":8080"
 )
 
+var talks[] pb.Talk
+
 // server is used to implement server.
 type server struct{}
 
 // SendSignup implements signup request
 func (s *server) SendSignup(ctx context.Context, in *pb.SignupRequest) (*pb.SignupReply, error) {
-	log.Println(in.Email)
+	log.Println(in.User.Email)
 
-	bs, err := bcrypt.GenerateFromPassword([]byte(in.Password1), bcrypt.MinCost)
+	bs, err := bcrypt.GenerateFromPassword([]byte(in.User.Password1), bcrypt.MinCost)
 	if err != nil {
 		log.Fatalf("failed to resolve: %v", err)
 	}
 	u := user{
-		UserName:in.Email,
-		First:in.Firstname,
-		Last:in.Lastname,
+		UserName:in.User.Email,
+		First:in.User.Firstname,
+		Last:in.User.Lastname,
 		Password:bs,
 	}
 	//log.Printf(" ",u.UserName,u.First)
-	if _, ok := dbUsers[in.Email]; ok {
-		return &pb.SignupReply{Message: "User Exists" + in.Email}, errors.New("user already exists")
+	if _, ok := dbUsers[in.User.Email]; ok {
+		return &pb.SignupReply{Message: "User Exists" + in.User.Email}, errors.New("user already exists")
 	}
 	//log.Printf("user does not exist")
-	dbUsers[in.Email] = u
+	dbUsers[in.User.Email] = u
 	//sID, _ := uuid.NewV4()
-	dbSessions[in.Email]=session{u, time.Now(),"",false,nil}
+	dbSessions[in.User.Email]=session{u, time.Now(),"",false,nil}
 	log.Println("user addition successful")
-	return &pb.SignupReply{Message:in.Email, Sessionid:in.Email}, nil
+	return &pb.SignupReply{Message:in.User.Email, Sessionid:in.User.Email}, nil
 }
 // login request
 func (s *server) SendLogin(ctx context.Context, in *pb.LoginRequest) (*pb.LoginReply, error) {
@@ -81,7 +83,8 @@ func (s *server) SendLogout(ctx context.Context, in *pb.LogoutRequest) (*pb.Logo
 
 // cancel account request
 func (s *server) SendCancel(ctx context.Context, in *pb.CancelRequest) (*pb.CancelReply, error) {
-	
+	delete(dbUsers,in.Email)
+	delete(dbSessions,in.Email)
 	return &pb.CancelReply{Message: "SendCancel return:" + in.Email}, nil
 
 }
@@ -95,8 +98,9 @@ func (s *server) SendFollow(ctx context.Context, in *pb.FollowRequest) (*pb.Foll
 
 // talk  request
 func (s *server) SendTalk(ctx context.Context, in *pb.TalkRequest) (*pb.TalkReply, error) {
-	
-	return &pb.TalkReply{Email: "SendTalk return:" + in.Email}, nil
+	talks=append(talks,*in.Talk)
+
+	return &pb.TalkReply{Message: "SendTalk return:"}, nil
 
 }
 

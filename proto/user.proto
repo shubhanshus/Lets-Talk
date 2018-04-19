@@ -20,13 +20,21 @@ syntax = "proto3";
 
 package letstalk;
 
-
-
-message SignupRequest {
+message User{
   string email = 1;
   string password1 = 2;
   string firstname = 3;
   string lastname = 4;
+}
+
+message Talk{
+  string email = 1;
+  string talk = 2;
+  string date = 3;
+}
+
+message SignupRequest {
+  User user=1;
 }
 message SignupReply {
   string message = 1;
@@ -64,16 +72,20 @@ message FollowReply {
 }
 
 message TalkRequest {
-  string email = 1;
-  string talk = 2;
-  string date = 3;
+  Talk talk=1;
+  string message=2;
 }
 message TalkReply {
-  string email = 1;
-  string talk = 2;
-  string date = 3;
+  string message=1;
 }
 
+message GetUsers{
+    repeated User user=1;
+}
+
+message GetTalks{
+    repeated Talk talk=1;
+}
 
 //The signup request
 service Letstalk {
