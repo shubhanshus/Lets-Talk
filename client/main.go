@@ -88,6 +88,7 @@ func signup(w http.ResponseWriter, req *http.Request) {
 			errMsg:= err.Error()
 			errMsg=errMsg[33:len(errMsg)]
 			http.Error(w, errMsg , http.StatusForbidden)
+			return
 		}
 
 		userLoggedIn=true
@@ -150,18 +151,7 @@ func login(w http.ResponseWriter, req *http.Request) {
 		//	http.Error(w, "Username and/or password do not match", http.StatusForbidden)
 		//	return
 		//}
-		if(r.Message == "User Not found"){
-			http.Error(w, "User Not found", http.StatusForbidden)
-			return
-		}else if(r.Message == "username/password does not match"){
-			http.Error(w, "username/password does not match", http.StatusForbidden)
-			return
-		}else{
-			// redirect
-			un = r.Message
-			http.Redirect(w, req, "/", http.StatusSeeOther)
-			return
-		}
+		un = r.Message
 		http.Redirect(w, req, "/", http.StatusSeeOther)
 		return
 	}
@@ -192,6 +182,7 @@ func logout(w http.ResponseWriter, req *http.Request) {
 		errMsg:= err.Error()
 		errMsg=errMsg[33:len(errMsg)]
 		http.Error(w, errMsg , http.StatusForbidden)
+		return
 	}
 	log.Println(u.UserName, r.Message)
 	cookie = &http.Cookie{
@@ -205,9 +196,7 @@ func logout(w http.ResponseWriter, req *http.Request) {
 }
 
 func postTalk(w http.ResponseWriter, req *http.Request) {
-	
-	
-    count:=0
+	count:=0
 	log.Println("method:", req.Method) //get request method
 	req.ParseForm()
 
@@ -238,6 +227,7 @@ func postTalk(w http.ResponseWriter, req *http.Request) {
 			errMsg:= err.Error()
 			errMsg=errMsg[33:len(errMsg)]
 			http.Error(w, errMsg , http.StatusForbidden)
+			return
 		}
 		log.Println(r.Talk)
 		count=len(dbMyTalk)
