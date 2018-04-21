@@ -66,8 +66,17 @@ func signup(w http.ResponseWriter, req *http.Request) {
 		// get form values
 		un := req.FormValue("email")
 		p1 := req.FormValue("password1")
+		p2 := req.FormValue("password2")
 		f := req.FormValue("firstname")
 		l := req.FormValue("lastname")
+		if(un == "" || p1 == "" || p2 == "" || f == "" || l == ""){
+			http.Redirect(w, req, "/", http.StatusSeeOther)
+			return
+		}
+		if(p1 != p2){
+			http.Redirect(w, req, "/", http.StatusSeeOther)
+			return
+		}
 		
 		//dial server
 		conn, err := grpc.Dial(address, grpc.WithInsecure())
@@ -115,7 +124,12 @@ func login(w http.ResponseWriter, req *http.Request) {
 	if req.Method == http.MethodPost {
 		un := req.FormValue("name")
 		p := req.FormValue("password")
-		// is there a username?
+		
+		if(un == "" || p == ""){
+			http.Redirect(w, req, "/", http.StatusSeeOther)
+			return
+		}
+
 
 		conn, err := grpc.Dial(address, grpc.WithInsecure())
 		if err != nil {
