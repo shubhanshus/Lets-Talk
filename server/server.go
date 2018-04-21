@@ -17,8 +17,8 @@ const (
 	port = ":8080"
 )
 
-var talks[] pb.Talk
-
+var count=0
+var talks = make([]*pb.Talk,count)
 // server is used to implement server.
 type server struct{}
 
@@ -71,7 +71,7 @@ func (s *server) SendLogin(ctx context.Context, in *pb.LoginRequest) (*pb.LoginR
 func (s *server) SendLogout(ctx context.Context, in *pb.LogoutRequest) (*pb.LogoutReply, error) {
 	log.Println(in.Email)
 
-	
+
 	// clean up dbSessions
 	if time.Now().Sub(dbSessionsCleaned) > (time.Second * 600) {
 		go cleanSessions()
@@ -91,16 +91,25 @@ func (s *server) SendCancel(ctx context.Context, in *pb.CancelRequest) (*pb.Canc
 
 // follow  request
 func (s *server) SendFollow(ctx context.Context, in *pb.FollowRequest) (*pb.FollowReply, error) {
-	
+
 	return &pb.FollowReply{Message: "SendFollow return:" + in.Email}, nil
 
 }
 
+
 // talk  request
 func (s *server) SendTalk(ctx context.Context, in *pb.TalkRequest) (*pb.TalkReply, error) {
-	talks=append(talks,*in.Talk)
+	log.Println(in.Talk.Talk)
+	tal:=pb.Talk{
+		Talk:in.Talk.Talk,
+		Date:in.Talk.Date,
+		Email:in.Talk.Email,
+	}
 
-	return &pb.TalkReply{Message: "SendTalk return:"}, nil
+	talks=append(talks,&tal)
+	count= count + 1
+	log.Println(talks)
+	return &pb.TalkReply{Talk:talks,Message: "SendTalk return:"}, nil
 
 }
 

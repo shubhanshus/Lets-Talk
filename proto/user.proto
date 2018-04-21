@@ -77,14 +77,15 @@ message TalkRequest {
 }
 message TalkReply {
   string message=1;
+  repeated Talk talk=2;
 }
 
 message GetUsers{
-    repeated User user=1;
+  repeated User user=1;
 }
 
 message GetTalks{
-    repeated Talk talk=1;
+  repeated Talk talk=1;
 }
 
 //The signup request

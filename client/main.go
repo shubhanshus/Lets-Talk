@@ -243,6 +243,7 @@ func postTalk(w http.ResponseWriter, req *http.Request) {
 			http.Error(w, errMsg , http.StatusForbidden)
 			return
 		}
+		log.Println(r.Talk)
 		log.Println(r.Message)
 		//log.Println(r.Talk)
 	}
