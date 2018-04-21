@@ -19,6 +19,7 @@ const (
 
 var count=0
 var talks = make([]*pb.Talk,count)
+var userlist = make([]string,count)
 // server is used to implement server.
 type server struct{}
 
@@ -30,11 +31,11 @@ func (s *server) SendSignup(ctx context.Context, in *pb.SignupRequest) (*pb.Sign
 	if err != nil {
 		log.Fatalf("failed to resolve: %v", err)
 	}
-	u := user{
-		UserName:in.User.Email,
-		First:in.User.Firstname,
-		Last:in.User.Lastname,
-		Password:bs,
+	u := pb.User{
+		Email:in.User.Email,
+		Firstname:in.User.Firstname,
+		Lastname:in.User.Lastname,
+		Password1:string(bs[:]),
 	}
 	//log.Printf(" ",u.UserName,u.First)
 	if _, ok := dbUsers[in.User.Email]; ok {
@@ -44,6 +45,7 @@ func (s *server) SendSignup(ctx context.Context, in *pb.SignupRequest) (*pb.Sign
 	dbUsers[in.User.Email] = u
 	//sID, _ := uuid.NewV4()
 	dbSessions[in.User.Email]=session{u, time.Now(),"",false,nil}
+	userlist=append(userlist,u.Email)
 	log.Println("user addition successful")
 	return &pb.SignupReply{Message:in.User.Email, Sessionid:in.User.Email}, nil
 }
@@ -57,7 +59,7 @@ func (s *server) SendLogin(ctx context.Context, in *pb.LoginRequest) (*pb.LoginR
 		return &pb.LoginReply{}, errors.New("user does not exist")
 	}
 	// does the entered password match the stored password?
-	err := bcrypt.CompareHashAndPassword(u.Password, []byte(in.Password1))
+	err := bcrypt.CompareHashAndPassword([]byte(u.Password1), []byte(in.Password1))
 	if err != nil {
 		return &pb.LoginReply{Message: "username/password does not match"}, errors.New("username/password does not match")
 	}
@@ -83,8 +85,19 @@ func (s *server) SendLogout(ctx context.Context, in *pb.LogoutRequest) (*pb.Logo
 
 // cancel account request
 func (s *server) SendCancel(ctx context.Context, in *pb.CancelRequest) (*pb.CancelReply, error) {
+	log.Println("Email",in.Email)
+
 	delete(dbUsers,in.Email)
 	delete(dbSessions,in.Email)
+	updateduserlist:=make([]string,len(userlist))
+	for _,us:=range userlist{
+		if us!=in.Email{
+			updateduserlist=append(updateduserlist,us)
+		}
+	}
+	userlist=updateduserlist
+	log.Println(dbUsers)
+	log.Println(userlist)
 	return &pb.CancelReply{Message: "SendCancel return:" + in.Email}, nil
 
 }
@@ -92,7 +105,7 @@ func (s *server) SendCancel(ctx context.Context, in *pb.CancelRequest) (*pb.Canc
 // follow  request
 func (s *server) SendFollow(ctx context.Context, in *pb.FollowRequest) (*pb.FollowReply, error) {
 
-	return &pb.FollowReply{Message: "SendFollow return:" + in.Email}, nil
+	return &pb.FollowReply{Userlist:userlist,Message: "SendFollow return:" + in.Email}, nil
 
 }
 

@@ -69,6 +69,7 @@ message FollowRequest {
 }
 message FollowReply {
   string message = 1;
+  repeated string userlist=2;
 }
 
 message TalkRequest {

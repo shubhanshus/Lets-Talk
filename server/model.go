@@ -1,6 +1,10 @@
 package main
 
-import "time"
+import (
+	"time"
+	pb "../proto"
+)
+
 
 type user struct {
 	UserName string
@@ -10,7 +14,7 @@ type user struct {
 }
 
 type session struct {
-	user
+	pb.User
 	//un           string
 	LastActivity time.Time
 	ViewingUser   string
@@ -46,7 +50,7 @@ type myTalk struct {
 	Date         string
 }
 
-var dbUsers = map[string]user{}       // user ID, user
+var dbUsers = map[string]pb.User{}       // user ID, user
 var dbSessions = map[string]session{} // session ID, session
 var dbSessionsCleaned time.Time
 //var dbTweets = map[string]tweet{}

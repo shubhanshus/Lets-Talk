@@ -26,7 +26,7 @@ func getUser(w http.ResponseWriter, req *http.Request) user {
 	if s, ok := dbSessions[c.Value]; ok {
 		s.LastActivity = time.Now()
 		dbSessions[c.Value] = s
-		u = dbUsers[s.UserName]
+		//u = dbUsers[s.UserName]
 	}
 	return u
 }
@@ -41,7 +41,7 @@ func alreadyLoggedIn(w http.ResponseWriter, req *http.Request) bool {
 		s.LastActivity = time.Now()
 		dbSessions[c.Value] = s
 	}
-	_, ok = dbUsers[s.UserName]
+	//_, ok = dbUsers[s.UserName]
 	// refresh session
 	c.MaxAge = sessionLength
 	http.SetCookie(w, c)
@@ -65,7 +65,7 @@ func cleanSessions() {
 func showSessions() {
 	fmt.Println("********")
 	for k, v := range dbSessions {
-		fmt.Println(k, v.UserName)
+		fmt.Println(k, v.User)
 	}
 	fmt.Println("")
 }
@@ -80,6 +80,6 @@ func createSession(w http.ResponseWriter, req *http.Request, user user) {
 	}
 	c.MaxAge = sessionLength
 	http.SetCookie(w, c)
-	dbSessions[c.Value] = session{user, time.Now(),"",false,nil}
+	//dbSessions[c.Value] = session{user, time.Now(),"",false,nil}
 
 }
