@@ -120,7 +120,6 @@ func login(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	var u pb.User
 	// process form submission
 	if req.Method == http.MethodPost {
 		un := req.FormValue("name")
@@ -151,7 +150,8 @@ func login(w http.ResponseWriter, req *http.Request) {
 		
 		createCookie(r.SessionId,w)
 		userLoggedIn=true
-
+		u.Email=un
+		log.Println(u.Email)
 		http.Redirect(w, req, "/", http.StatusSeeOther)
 		return
 	}
