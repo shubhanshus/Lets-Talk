@@ -107,19 +107,6 @@ func (s *server) SendCancel(ctx context.Context, in *pb.CancelRequest) (*pb.Canc
 func (s *server) SendFollow(ctx context.Context, in *pb.FollowRequest) (*pb.FollowReply, error) {
 
 	//return &pb.FollowReply{Userlist:userlist, Message: "SendFollow return:" + in.Email}, nil
-	var usertalks = make([]*pb.Talk,count)
-
-	var dbusertalk = map[string][]*pb.Talk{}
-	for _,us:=range in.Email{
-		for _,tal:=range talks{
-			if tal.Email==us{
-					usertalks=append(usertalks,tal)
-			}
-		}
-
-	}
-	dbusertalk[in.Username]= usertalks
-
 	log.Println("recieve users:",in.Email)
 	return &pb.FollowReply{Userlist:userlist, Message: "SendFollow returns" }, nil
 
