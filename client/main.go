@@ -120,13 +120,13 @@ func login(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	var u user
+	var u pb.User
 	// process form submission
 	if req.Method == http.MethodPost {
 		un := req.FormValue("name")
 		p := req.FormValue("password")
 		
-		if(un == "" || p == ""){
+		if un == "" || p == ""{
 			http.Redirect(w, req, "/", http.StatusSeeOther)
 			return
 		}

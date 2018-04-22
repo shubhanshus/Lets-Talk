@@ -3,7 +3,7 @@ package main
 import (
 "net/http"
 )
-
+const sessionLength = 300
 func createCookie(sID string,w http.ResponseWriter) {
 
 	c := &http.Cookie{
