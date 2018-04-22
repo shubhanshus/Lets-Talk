@@ -105,7 +105,7 @@ func TestAccountCancel(t *testing.T){
 		t.Errorf("Account Cancel Failed")
 	}
 	log.Println(resp.Message)
-	if resp.Message=="" {
+	if resp.Message=="Talk added successfully" {
 		t.Errorf("User addtion failed")
 	}
 }
