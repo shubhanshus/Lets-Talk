@@ -98,6 +98,7 @@ func (s *server) SendCancel(ctx context.Context, in *pb.CancelRequest) (*pb.Canc
 	userlist=updateduserlist
 	log.Println(dbUsers)
 	log.Println(userlist)
+	deleteTalk(in.Email,talks)
 	return &pb.CancelReply{Message: "SendCancel return:" + in.Email}, nil
 
 }
@@ -106,6 +107,19 @@ func (s *server) SendCancel(ctx context.Context, in *pb.CancelRequest) (*pb.Canc
 func (s *server) SendFollow(ctx context.Context, in *pb.FollowRequest) (*pb.FollowReply, error) {
 
 	//return &pb.FollowReply{Userlist:userlist, Message: "SendFollow return:" + in.Email}, nil
+	var usertalks = make([]*pb.Talk,count)
+
+	var dbusertalk = map[string][]*pb.Talk{}
+	for _,us:=range in.Email{
+		for _,tal:=range talks{
+			if tal.Email==us{
+					usertalks=append(usertalks,tal)
+			}
+		}
+
+	}
+	dbusertalk[in.Username]= usertalks
+
 	log.Println("recieve users:",in.Email)
 	return &pb.FollowReply{Userlist:userlist, Message: "SendFollow returns" }, nil
 
@@ -120,12 +134,42 @@ func (s *server) SendTalk(ctx context.Context, in *pb.TalkRequest) (*pb.TalkRepl
 		Date:in.Talk.Date,
 		Email:in.Talk.Email,
 	}
-
 	talks=append(talks,&tal)
 	count= count + 1
 	log.Println(talks)
 	return &pb.TalkReply{Talk:talks,Message: "SendTalk return:"}, nil
 
+}
+
+func (s *server) FollowUsers(ctx context.Context, in *pb.FollowUserRequest) (*pb.FollowUserReply, error) {
+
+	//var usertalks = make([]*pb.Talk,count)
+	var dbusertalk = map[string][]*pb.Talk{}
+	dbusertalk[in.Username]= updateTalk(in.Email,talks)
+	return &pb.FollowUserReply{Talk:talks, Username:in.Username }, nil
+
+}
+
+func updateTalk(userlist []string,talk []*pb.Talk) ([]*pb.Talk){
+	var usertalks = make([]*pb.Talk,count)
+	for _,us:=range userlist{
+		for _,tal:=range talk{
+			if tal.Email==us{
+				usertalks=append(usertalks,tal)
+			}
+		}
+	}
+	return usertalks
+}
+
+func deleteTalk(username string,talk []*pb.Talk) ([]*pb.Talk){
+	var usertalks = make([]*pb.Talk,count)
+	for _,tal:=range talk{
+		if tal.Email!=username{
+			usertalks=append(usertalks,tal)
+		}
+	}
+	return usertalks
 }
 
 func main() {

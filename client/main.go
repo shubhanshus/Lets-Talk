@@ -336,15 +336,15 @@ func follow(w http.ResponseWriter, req *http.Request) {
 		// Contact the server and print out its response.
 		ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 		defer cancel()
-		r, err := c.SendFollow(ctx, &pb.FollowRequest{Email: ud})
+		r, err := c.FollowUsers(ctx, &pb.FollowUserRequest{Username:u.UserName,Email: ud})
 		if err != nil {
 			errMsg:= err.Error()
 			errMsg=errMsg[33:len(errMsg)]
 			http.Error(w, errMsg , http.StatusForbidden)
 			return
 		}
-		log.Println(r.Message)
-
+		log.Println(r.Username)
+		talks=r.Talk
 		
 	}
 	http.Redirect(w, req, "/", http.StatusSeeOther)
