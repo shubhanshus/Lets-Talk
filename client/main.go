@@ -25,9 +25,10 @@ func init() {
 }
 
 
+
 func index(w http.ResponseWriter, req *http.Request){
 	var IndexPageVars pageVariables
-	log.Println("index user:", un, u.Email)
+	
 	now := time.Now() // find the time right now
 	if userLoggedIn{
 		uname = u.Email
@@ -115,11 +116,10 @@ func signup(w http.ResponseWriter, req *http.Request) {
 func login(w http.ResponseWriter, req *http.Request) {
 
 	if userLoggedIn{
-		http.Redirect(w, req, "/", http.StatusSeeOther)
+		http.Redirect(w, req, "/home", http.StatusSeeOther)
 		return
 	}
 
-	var u pb.User
 	// process form submission
 	if req.Method == http.MethodPost {
 		un := req.FormValue("name")
@@ -150,20 +150,18 @@ func login(w http.ResponseWriter, req *http.Request) {
 		
 		createCookie(r.SessionId,w)
 		userLoggedIn=true
-		u.Email = r.Message
-		un = u.Email
-		log.Println("client login user:",u.Email)
-
+		u.Email=un
+		log.Println(u.Email)
 		http.Redirect(w, req, "/", http.StatusSeeOther)
 		return
-		
 	}
+
 	tpl.ExecuteTemplate(w, "login.html", u)
 }
 
 func logout(w http.ResponseWriter, req *http.Request) {
 	if !userLoggedIn{
-		http.Redirect(w, req, "/", http.StatusSeeOther)
+		http.Redirect(w, req, "/home", http.StatusSeeOther)
 		return
 	}
 	cookie, _ := req.Cookie("session")
@@ -199,7 +197,7 @@ func logout(w http.ResponseWriter, req *http.Request) {
 
 func postTalk(w http.ResponseWriter, req *http.Request) {
 	if !userLoggedIn{
-		http.Redirect(w, req, "/", http.StatusSeeOther)
+		http.Redirect(w, req, "/home", http.StatusSeeOther)
 		return
 	}
 	//count:=0
@@ -273,6 +271,7 @@ func cancel(w http.ResponseWriter, req *http.Request) {
 		Value:  "",
 		MaxAge: -1,
 	}
+	log.Println("Follow Tweets: ",r.Talk)
 	talks=r.Talk
 	http.SetCookie(w, cookie)
 	userLoggedIn=false
@@ -281,7 +280,7 @@ func cancel(w http.ResponseWriter, req *http.Request) {
 
 func cancelaccount(w http.ResponseWriter, req *http.Request){
 	if !userLoggedIn{
-		http.Redirect(w, req, "/", http.StatusSeeOther)
+		http.Redirect(w, req, "/home", http.StatusSeeOther)
 		return
 	}
 	tpl, err := template.ParseFiles("templates/cancel.html") //parse the html file
@@ -297,7 +296,7 @@ func cancelaccount(w http.ResponseWriter, req *http.Request){
 
 func follow(w http.ResponseWriter, req *http.Request) {
 	if !userLoggedIn{
-		http.Redirect(w, req, "/", http.StatusSeeOther)
+		http.Redirect(w, req, "/home", http.StatusSeeOther)
 		return
 	}
 
@@ -330,6 +329,7 @@ func follow(w http.ResponseWriter, req *http.Request) {
 			http.Error(w, errMsg , http.StatusForbidden)
 			return
 		}
+		log.Println("Follow Return:",r.Talk)
 		log.Println(r.Username)
 		talks=r.Talk
 		
@@ -340,7 +340,7 @@ func follow(w http.ResponseWriter, req *http.Request) {
 
 func followothers(w http.ResponseWriter, req *http.Request) {
 	if !userLoggedIn{
-		http.Redirect(w, req, "/", http.StatusSeeOther)
+		http.Redirect(w, req, "/home", http.StatusSeeOther)
 		return
 	}
 
@@ -379,5 +379,3 @@ func followothers(w http.ResponseWriter, req *http.Request) {
 	}
 	
 }
-
-

@@ -107,7 +107,7 @@ func (s *server) SendCancel(ctx context.Context, in *pb.CancelRequest) (*pb.Canc
 	userlist=updateduserlist
 	log.Println(dbUsers)
 	log.Println(userlist)
-	deleteTalk(in.Email,talks)
+	talks=deleteTalk(in.Email,talks)
 	return &pb.CancelReply{Talk:talks,Message: "SendCancel return:" + in.Email}, nil
 
 }
@@ -142,29 +142,35 @@ func (s *server) FollowUsers(ctx context.Context, in *pb.FollowUserRequest) (*pb
 	//var usertalks = make([]*pb.Talk,count)
 	var dbusertalk = map[string][]*pb.Talk{}
 	dbusertalk[in.Username]= updateTalk(in.Email,talks)
-	return &pb.FollowUserReply{Talk:talks, Username:in.Username }, nil
+	return &pb.FollowUserReply{Talk:dbusertalk[in.Username], Username:in.Username }, nil
 
 }
 
 func updateTalk(userlist []string,talk []*pb.Talk) ([]*pb.Talk){
 	var usertalks = make([]*pb.Talk,count)
+	usertalks=nil
 	for _,us:=range userlist{
 		for _,tal:=range talk{
 			if tal.Email==us{
+				log.Println("in update talk",us)
 				usertalks=append(usertalks,tal)
 			}
 		}
 	}
+	log.Println(usertalks)
 	return usertalks
 }
 
 func deleteTalk(username string,talk []*pb.Talk) ([]*pb.Talk){
 	var usertalks = make([]*pb.Talk,count)
+	usertalks=nil
 	for _,tal:=range talk{
 		if tal.Email!=username{
+			log.Println("cancel account:",username)
 			usertalks=append(usertalks,tal)
 		}
 	}
+	log.Println(" after delete tweets:",usertalks)
 	return usertalks
 }
 
