@@ -61,7 +61,30 @@ func TestLogin(t *testing.T){
 	}
 }
 
+func TestPostTalk(t *testing.T){
+	conn, err := grpc.Dial(address, grpc.WithInsecure())
+	if err != nil {
+		t.Fatalf("did not connect: %v", err)
+	}
+	defer conn.Close()
+	c := pb.NewLetstalkClient(conn)
+	var talk1 pb.Talk
+	talk1.Email="test@test.com"
+	talk1.Talk="Test message"
+	talk1.Date=time.Now().Format("02-01-2006")+" "+time.Now().Format("15:04PM")
+	// Contact the server and print out its response.
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+	resp, err := c.SendTalk(ctx, &pb.TalkRequest{Talk: &talk1})
+	if err != nil {
+		t.Errorf("Post tweet Failed")
+	}
+	log.Println(resp.Message)
+	if resp.Message=="" {
+		t.Errorf("User addtion failed")
+	}
 
+}
 
 func TestAccountCancel(t *testing.T){
 	conn, err := grpc.Dial(address, grpc.WithInsecure())
