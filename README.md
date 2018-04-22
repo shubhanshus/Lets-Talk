@@ -62,4 +62,8 @@ Follow other users and see corresponding posts
 Encryption password
 
 
-Part2- Separate frond-end and backend
+Part2- Separate front-end and backend
+Front server port 8081
+Back server port 8080
+Communicate through RPC and channel
+
