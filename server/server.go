@@ -133,7 +133,7 @@ func (s *server) SendTalk(ctx context.Context, in *pb.TalkRequest) (*pb.TalkRepl
 	talks=append(talks,&tal)
 	count= count + 1
 	log.Println(talks)
-	return &pb.TalkReply{Talk:talks,Message: "SendTalk return:"}, nil
+	return &pb.TalkReply{Talk:talks,Message: "Talk added successfully"}, nil
 
 }
 
