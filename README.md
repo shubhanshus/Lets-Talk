@@ -6,9 +6,18 @@ Yingxi Cao(yc2539) and Shubhanshu Surana(ss11012)
 
 This is the final project for distributed systems class. 
 
-How to run on MacOS:
+Part2- Separate front-end and backend
+Front server port 8081
+Back server port 8080
+Communicate through RPC and channel
+
+How to run on MacOS :
 export GOPATH=/Users/XXX/Let-s-talk-master/
-To start run model.go main.go session.go
+To start client server: go to directory /client
+go run model.go client.go session.go main.go
+
+To start backend server: go to directory /server
+go run server.go
 
 To run test cases for part 2:
 run the server.go and then do go test -v
@@ -62,8 +71,5 @@ Follow other users and see corresponding posts
 Encryption password
 
 
-Part2- Separate front-end and backend
-Front server port 8081
-Back server port 8080
-Communicate through RPC and channel
+
 
