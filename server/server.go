@@ -107,7 +107,7 @@ func (s *server) SendCancel(ctx context.Context, in *pb.CancelRequest) (*pb.Canc
 	log.Println(dbUsers)
 	log.Println(userlist)
 	deleteTalk(in.Email,talks)
-	return &pb.CancelReply{Message: "SendCancel return:" + in.Email}, nil
+	return &pb.CancelReply{Talk:talks,Message: "SendCancel return:" + in.Email}, nil
 
 }
 

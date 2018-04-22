@@ -271,6 +271,7 @@ func cancel(w http.ResponseWriter, req *http.Request) {
 		Value:  "",
 		MaxAge: -1,
 	}
+	talks=r.Talk
 	http.SetCookie(w, cookie)
 	userLoggedIn=false
 	http.Redirect(w, req, "/", http.StatusSeeOther)

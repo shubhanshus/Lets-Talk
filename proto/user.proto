@@ -62,6 +62,7 @@ message CancelRequest {
 }
 message CancelReply {
   string message = 1;
+  repeated Talk talk=2;
 }
 
 message FollowRequest {
