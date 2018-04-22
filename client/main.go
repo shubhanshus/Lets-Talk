@@ -271,6 +271,7 @@ func cancel(w http.ResponseWriter, req *http.Request) {
 		Value:  "",
 		MaxAge: -1,
 	}
+	log.Println("Follow Tweets: ",r.Talk)
 	talks=r.Talk
 	http.SetCookie(w, cookie)
 	userLoggedIn=false
@@ -328,6 +329,7 @@ func follow(w http.ResponseWriter, req *http.Request) {
 			http.Error(w, errMsg , http.StatusForbidden)
 			return
 		}
+		log.Println("Follow Return:",r.Talk)
 		log.Println(r.Username)
 		talks=r.Talk
 		

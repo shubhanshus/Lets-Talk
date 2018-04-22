@@ -147,13 +147,16 @@ func (s *server) FollowUsers(ctx context.Context, in *pb.FollowUserRequest) (*pb
 
 func updateTalk(userlist []string,talk []*pb.Talk) ([]*pb.Talk){
 	var usertalks = make([]*pb.Talk,count)
+	usertalks=nil
 	for _,us:=range userlist{
 		for _,tal:=range talk{
 			if tal.Email==us{
+				log.Println("in update talk",us)
 				usertalks=append(usertalks,tal)
 			}
 		}
 	}
+	log.Println(usertalks)
 	return usertalks
 }
 
