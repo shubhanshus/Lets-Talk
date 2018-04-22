@@ -12,7 +12,7 @@ import (
 )
 
 var tpl *template.Template
-var u user
+var u pb.User
 var talks []*pb.Talk
 var address = "localhost:8080"
 var userLoggedIn =false
@@ -22,7 +22,6 @@ var uname string
 
 func init() {
 	tpl = template.Must(template.ParseGlob("templates/*"))
-	dbSessionsCleaned = time.Now()
 }
 
 
@@ -32,7 +31,7 @@ func index(w http.ResponseWriter, req *http.Request){
 	
 	now := time.Now() // find the time right now
 	if userLoggedIn{
-		uname = u.UserName
+		uname = u.Email
 		log.Println("Hello user:", uname)
 	}else {
 		log.Println("User not logged in")
@@ -105,8 +104,8 @@ func signup(w http.ResponseWriter, req *http.Request) {
 
 		userLoggedIn=true
 		log.Println(r.Message)
-		u.UserName = r.Message
-		un = u.UserName
+		u.Email = r.Message
+		un = u.Email
 		http.Redirect(w, req, "/", http.StatusSeeOther)
 		return
 		
@@ -153,21 +152,6 @@ func login(w http.ResponseWriter, req *http.Request) {
 		createCookie(r.SessionId,w)
 		userLoggedIn=true
 
-		//u, ok := dbUsers[un]
-		//if !ok {
-		//	log.Println(un)
-		//	log.Println(dbUsers)
-		//	http.Error(w, "Username not found", http.StatusForbidden)
-		//	return
-		//}
-		//// does the entered password match the stored password?
-		//err := bcrypt.CompareHashAndPassword(u.Password, []byte(p))
-		//if err != nil {
-		//	http.Error(w, "Username and/or password do not match", http.StatusForbidden)
-		//	return
-		//}
-		//un = r.Message
-
 		http.Redirect(w, req, "/", http.StatusSeeOther)
 		return
 	}
@@ -200,7 +184,7 @@ func logout(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, errMsg , http.StatusForbidden)
 		return
 	}
-	log.Println(u.UserName, r.Message)
+	log.Println(u.Email, r.Message)
 	cookie = &http.Cookie{
 		Name:   "session",
 		Value:  "",
@@ -223,9 +207,9 @@ func postTalk(w http.ResponseWriter, req *http.Request) {
 	talkf := req.Form["mytalk"]
 	talk := talkf[0]
 	talk1.Talk=talk
-	talk1.Email=u.UserName
+	talk1.Email=u.Email
 	talk1.Date=time.Now().Format("02-01-2006")+" "+time.Now().Format("15:04PM")
-	log.Println(u.UserName)
+	log.Println(u.Email)
 	if req.Method == http.MethodPost {
 
 		//dial server
@@ -269,14 +253,14 @@ func cancel(w http.ResponseWriter, req *http.Request) {
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)
 	}
-	log.Println("UserName:",u.UserName)
+	log.Println("UserName:",u.Email)
 	defer conn.Close()
 	c := pb.NewLetstalkClient(conn)
 
 	// Contact the server and print out its response.
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
-	r, err := c.SendCancel(ctx, &pb.CancelRequest{Email: u.UserName})
+	r, err := c.SendCancel(ctx, &pb.CancelRequest{Email: u.Email})
 	if err != nil {
 		http.Error(w, r.Message, http.StatusForbidden)
 		return
@@ -336,7 +320,7 @@ func follow(w http.ResponseWriter, req *http.Request) {
 		// Contact the server and print out its response.
 		ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 		defer cancel()
-		r, err := c.FollowUsers(ctx, &pb.FollowUserRequest{Username:u.UserName,Email: ud})
+		r, err := c.FollowUsers(ctx, &pb.FollowUserRequest{Username:u.Email,Email: ud})
 		if err != nil {
 			errMsg:= err.Error()
 			errMsg=errMsg[33:len(errMsg)]
@@ -390,13 +374,5 @@ func followothers(w http.ResponseWriter, req *http.Request) {
 	if err != nil { // if there is an error
 		log.Print("template executing error: ", err) //log it on terminal
 	}
-	
-}
-
-func updateTweets(session session) {
-	
-}
-
-func deleteTweets(){
 	
 }

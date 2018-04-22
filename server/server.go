@@ -20,6 +20,14 @@ const (
 var count=0
 var talks = make([]*pb.Talk,count)
 var userlist = make([]string,count)
+var dbUsers = map[string]pb.User{}       // user ID, user
+var dbSessions = map[string]session{} // session ID, session
+
+type session struct {
+	pb.User
+	LastActivity time.Time
+}
+
 // server is used to implement server.
 type server struct{}
 
@@ -44,7 +52,7 @@ func (s *server) SendSignup(ctx context.Context, in *pb.SignupRequest) (*pb.Sign
 	//log.Printf("user does not exist")
 	dbUsers[in.User.Email] = u
 	//sID, _ := uuid.NewV4()
-	dbSessions[in.User.Email]=session{u, time.Now(),"",false,nil}
+	dbSessions[in.User.Email]=session{u, time.Now()}
 	userlist=append(userlist,u.Email)
 	log.Println("user addition successful")
 	return &pb.SignupReply{Message:in.User.Email, Sessionid:in.User.Email}, nil
@@ -63,7 +71,7 @@ func (s *server) SendLogin(ctx context.Context, in *pb.LoginRequest) (*pb.LoginR
 	if err != nil {
 		return &pb.LoginReply{Message: "username/password does not match"}, errors.New("username/password does not match")
 	}
-	dbSessions[in.Email]=session{u, time.Now(),"",false,nil}
+	dbSessions[in.Email]=session{u, time.Now()}
 	return &pb.LoginReply{Message: "SendLogin return:" + in.Email}, nil
 
 
@@ -74,10 +82,10 @@ func (s *server) SendLogout(ctx context.Context, in *pb.LogoutRequest) (*pb.Logo
 	log.Println(in.Email)
 
 
-	// clean up dbSessions
-	if time.Now().Sub(dbSessionsCleaned) > (time.Second * 600) {
-		go cleanSessions()
-	}
+	//// clean up dbSessions
+	//if time.Now().Sub(dbSessionsCleaned) > (time.Second * 600) {
+	//	go cleanSessions()
+	//}
 
 	delete(dbSessions,in.Email)
 	return &pb.LogoutReply{}, nil
