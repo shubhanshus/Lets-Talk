@@ -105,7 +105,9 @@ func (s *server) SendCancel(ctx context.Context, in *pb.CancelRequest) (*pb.Canc
 // follow  request
 func (s *server) SendFollow(ctx context.Context, in *pb.FollowRequest) (*pb.FollowReply, error) {
 
-	return &pb.FollowReply{Userlist:userlist,Message: "SendFollow return:" + in.Email}, nil
+	//return &pb.FollowReply{Userlist:userlist, Message: "SendFollow return:" + in.Email}, nil
+	log.Println("recieve users:",in.Email)
+	return &pb.FollowReply{Userlist:userlist, Message: "SendFollow returns" }, nil
 
 }
 
