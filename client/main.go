@@ -364,6 +364,13 @@ func followothers(w http.ResponseWriter, req *http.Request) {
 	log.Println(r.Userlist)
 	log.Println(r.Message)
 
+    var ulist []string
+    for _,us:=range r.Userlist{
+		if us!=""{
+			ulist=append(ulist,us)
+		}
+	}
+
 	tpl, err := template.ParseFiles("templates/follow.html") //parse the html file
 	if err != nil { // if there is an error
 		log.Print("template parsing error: ", err) // log it on terminal
@@ -371,7 +378,7 @@ func followothers(w http.ResponseWriter, req *http.Request) {
 	var FollowPageVars followVariables
 	FollowPageVars = followVariables{
 		UserName: uname,
-		UserNames: r.Userlist,
+		UserNames: ulist,
 	}
 	err = tpl.Execute(w, FollowPageVars) //execute the template and pass it to index page
 	if err != nil { // if there is an error
