@@ -36,8 +36,8 @@ $(function(){
 				talklist = "";
 
 				for (var i = data.length - 1; i >= 0; i--) {
-					if(data[i].UserName == ""){
-						data[i].UserName = "Anonymous";
+					if(data[i].email == ""){
+						data[i].email = "Anonymous";
 					}
 					if($.cookie("Count"+i) == undefined){
 						count = 0;
@@ -46,12 +46,12 @@ $(function(){
 					}
 					
 					talklist += "<div class='talklist'><div class='profile'><img src='/img/profile.jpg' height ='50' width='50' /></div>"+
-								"<div class='username'><h>"+data[i].UserName+"</h></div>"+
-								"<div class='content'><p>"+data[i].Talk+"</p></div>"+
-								"<div class='pdate'><p>"+data[i].Date+"</p></div>"+
+								"<div class='username'><h>"+data[i].email+"</h></div>"+
+								"<div class='content'><p>"+data[i].talk+"</p></div>"+
+								"<div class='pdate'><p>"+data[i].date+"</p></div>"+
 								"<div id='heart'><a id='"+i+"' href=''><img src='/img/heart.png' height ='20' width='30' /></a></div><div id='num"+i+"' class='num'><p>"+count+"</p></div></div>"
 					
-					console.log(data[i].UserName, data[i].Talk, data[i].Date, i);
+					console.log(data[i].email, data[i].talk, data[i].date, i);
 				}
 			}
 			

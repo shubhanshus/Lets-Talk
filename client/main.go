@@ -13,7 +13,7 @@ import (
 
 var tpl *template.Template
 var u user
-var talks []myTalk
+var talks []*pb.Talk
 var address = "localhost:8080"
 var userLoggedIn =false
 var un string
@@ -245,7 +245,8 @@ func postTalk(w http.ResponseWriter, req *http.Request) {
 			http.Error(w, errMsg , http.StatusForbidden)
 			return
 		}
-		log.Println(r.Talk)
+		talks = r.Talk
+		log.Println(talks)
 		log.Println(r.Message)
 		//log.Println(r.Talk)
 	}
@@ -254,6 +255,7 @@ func postTalk(w http.ResponseWriter, req *http.Request) {
 
 func showTalk(w http.ResponseWriter, req *http.Request) {
 	//get json api
+
     json.NewEncoder(w).Encode(talks)
 
 
