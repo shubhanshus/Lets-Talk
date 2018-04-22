@@ -10,12 +10,12 @@ How to run on MacOS:
 export GOPATH=/Users/XXX/Let-s-talk-master/
 To start run model.go main.go session.go
 
-To run test cases:
-go test -v
+To run test cases for part 2:
+run the server.go and then do go test -v
 
 How to run on Window:
-go build
-./distributed_systems_final.exe
+go build inside both the client and server folder
+run the ./client.exe and ./server.exe files
 
 Directory
 css:
