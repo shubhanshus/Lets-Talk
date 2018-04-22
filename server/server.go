@@ -72,7 +72,8 @@ func (s *server) SendLogin(ctx context.Context, in *pb.LoginRequest) (*pb.LoginR
 		return &pb.LoginReply{Message: "username/password does not match"}, errors.New("username/password does not match")
 	}
 	dbSessions[in.Email]=session{u, time.Now()}
-	return &pb.LoginReply{Message: "SendLogin return:" + in.Email}, nil
+	log.Println("server index user:",in.Email)
+	return &pb.LoginReply{Message: in.Email}, nil
 
 
 }
