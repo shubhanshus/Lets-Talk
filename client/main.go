@@ -18,7 +18,7 @@ var address = "localhost:8080"
 var userLoggedIn =false
 var un string
 var uname string
-
+var ud []string //follow list
 
 func init() {
 	tpl = template.Must(template.ParseGlob("templates/*"))
@@ -302,7 +302,7 @@ func follow(w http.ResponseWriter, req *http.Request) {
 
 
 	if req.Method == http.MethodPost {
-		var ud []string
+		
 		req.ParseForm()
 		log.Println(req.Form)
 		for _, values := range req.Form {   // range over map
@@ -310,7 +310,7 @@ func follow(w http.ResponseWriter, req *http.Request) {
 				ud=append(ud, value)
 			}
 		}
-		log.Println(ud)
+		log.Println("follow list",ud)
 		conn, err := grpc.Dial(address, grpc.WithInsecure())
 
 		if err != nil {
@@ -363,6 +363,7 @@ func followothers(w http.ResponseWriter, req *http.Request) {
 	}
 	log.Println(r.Userlist)
 	log.Println(r.Message)
+	log.Println("followed users",ud)
 
     var ulist []string
     for _,us:=range r.Userlist{
@@ -370,7 +371,22 @@ func followothers(w http.ResponseWriter, req *http.Request) {
 			ulist=append(ulist,us)
 		}
 	}
-
+	check := make([]string, len(ulist))
+	for i := 0; i < len(ulist); i++ {
+      check[i] = "unchecked"
+	}
+	for i := 0; i < len(r.Userlist); i++{
+		for _,fl:=range ud{
+			if fl == r.Userlist[i]{
+				check[i] = "checked"
+				continue
+			}else{
+				check[i] = "unchecked"
+				continue
+			}
+		}
+	}
+	log.Println("checked:", check)
 	tpl, err := template.ParseFiles("templates/follow.html") //parse the html file
 	if err != nil { // if there is an error
 		log.Print("template parsing error: ", err) // log it on terminal
@@ -379,7 +395,9 @@ func followothers(w http.ResponseWriter, req *http.Request) {
 	FollowPageVars = followVariables{
 		UserName: uname,
 		UserNames: ulist,
+		Checks: check,
 	}
+	log.Println("ulist",ulist)
 	err = tpl.Execute(w, FollowPageVars) //execute the template and pass it to index page
 	if err != nil { // if there is an error
 		log.Print("template executing error: ", err) //log it on terminal

@@ -4,7 +4,7 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 	<link rel="stylesheet" type="text/css" href="/css/follow-cancel.css">
 	<script type="text/javascript" src="/js/login.js"></script>
-
+	<script type="text/javascript" src="/js/follow.js"></script>
 	<title>Let's Talk</title>
 </head>
 <body>
@@ -16,18 +16,19 @@
 
 	<div class="followdiv">
 		<h>Hi, <span id="uname">{{.UserName}}</span></h>
-		<p>Chose the one you want to follow:</p>
+		<p>Check to follow, uncheck to unfollow:</p>
 		<div>
 			<form id="followform" method="post" action="/follow">
-				{{range .UserNames}}
-					{{.}}: <input type="checkbox" name="email" value={{.}} /><br />
+				
+				{{range $i, $user := .UserNames}}
+				{{$check := index $.Checks $i}}
+				{{$user}}: <input type="checkbox" name="email" value={{$user}} {{$check}}/><br />
 				{{end}}
 				<input id="follow" type="submit" value="Follow"> </input>
    			</form>  
 		</div>
-
-
 	</div>
+
 
 </body>
 </html>

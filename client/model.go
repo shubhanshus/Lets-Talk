@@ -15,4 +15,5 @@ type pageVariables struct {
 type followVariables struct {	
 	UserName	 string
 	UserNames	 []string  
+	Checks		 []string
 }
