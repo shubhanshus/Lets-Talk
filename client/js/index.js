@@ -4,6 +4,7 @@ $(function(){
 	$("#logout").hide();
 	$("#cancel").hide();
 	$("#follow").hide();
+	$("#unfollow").hide();
 
 	if(uname != ''){
 			$("#signup").hide();
@@ -11,6 +12,7 @@ $(function(){
 			$("#logout").show();
 			$("#cancel").show();
 			$("#follow").show();
+			$("#unfollow").show();
 	}
 
 	$( "#talk" ).click(function() {

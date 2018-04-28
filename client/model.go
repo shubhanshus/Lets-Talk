@@ -17,3 +17,7 @@ type followVariables struct {
 	UserNames	 []string  
 	Checks		 []string
 }
+type unfollowVariables struct {	
+	UserName	 string
+	UserNames	 []string  
+}

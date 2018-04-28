@@ -16,14 +16,13 @@
 
 	<div class="followdiv">
 		<h>Hi, <span id="uname">{{.UserName}}</span></h>
-		<p>Check to follow:</p>
+		<p>Check to unfollow:</p>
 		<div>
 			<form id="followform" method="post" action="/follow">
-				{{range $i, $user := .UserNames}}
-				{{$check := index $.Checks $i}}
-				{{$user}}: <input type="checkbox" name="email" value={{$user}} {{$check}}/><br />
+				{{range .UserNames}}
+				{{.}}: <input type="checkbox" name="email" value={{.}} /><br />
 				{{end}}
-				<input id="follow" type="submit" value="Follow"> </input>
+				<input id="unfollow" type="submit" value="Unfollow"> </input>
    			</form>  
 		</div>
 	</div>

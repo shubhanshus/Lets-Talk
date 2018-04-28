@@ -20,6 +20,8 @@ func main() {
 	http.HandleFunc("/list", showTalk)
 	http.HandleFunc("/follow", follow)
 	http.HandleFunc("/followothers", followothers)
+	http.HandleFunc("/unfollowothers", unfollowothers)
+
 	//resource path
 	http.Handle("/css/", http.StripPrefix("/css/", http.FileServer(http.Dir("css"))))
 	http.Handle("/img/", http.StripPrefix("/img/", http.FileServer(http.Dir("img"))))

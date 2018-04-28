@@ -404,3 +404,47 @@ func followothers(w http.ResponseWriter, req *http.Request) {
 	}
 	
 }
+
+func unfollowothers(w http.ResponseWriter, req *http.Request) {
+	if !userLoggedIn{
+		http.Redirect(w, req, "/home", http.StatusSeeOther)
+		return
+	}
+
+	conn, err := grpc.Dial(address, grpc.WithInsecure())
+	if err != nil {
+		log.Fatalf("did not connect: %v", err)
+	}
+	defer conn.Close()
+	c := pb.NewLetstalkClient(conn)
+
+	// Contact the server and print out its response.
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+	r, err := c.UnfollowUsers(ctx, &pb.UnfollowUserRequest{})
+	if err != nil {
+		errMsg:= err.Error()
+		errMsg=errMsg[33:len(errMsg)]
+		http.Error(w, errMsg , http.StatusForbidden)
+		return
+	}
+	log.Println(r)
+	
+    var ulist []string
+    
+	tpl, err := template.ParseFiles("templates/unfollow.html") //parse the html file
+	if err != nil { // if there is an error
+		log.Print("template parsing error: ", err) // log it on terminal
+	}
+	var UnfollowPageVars unfollowVariables
+	UnfollowPageVars = unfollowVariables{
+		UserName: uname,
+		UserNames: ulist,
+	}
+	log.Println("ulist",ulist)
+	err = tpl.Execute(w, UnfollowPageVars) //execute the template and pass it to index page
+	if err != nil { // if there is an error
+		log.Print("template executing error: ", err) //log it on terminal
+	}
+	
+}
