@@ -299,10 +299,8 @@ func follow(w http.ResponseWriter, req *http.Request) {
 		http.Redirect(w, req, "/home", http.StatusSeeOther)
 		return
 	}
-
-
 	if req.Method == http.MethodPost {
-		
+		ud =nil
 		req.ParseForm()
 		log.Println(req.Form)
 		for _, values := range req.Form {   // range over map
@@ -311,6 +309,8 @@ func follow(w http.ResponseWriter, req *http.Request) {
 			}
 		}
 		log.Println("follow list",ud)
+		ud=removeDuplicatesUnordered(ud)
+		log.Println("final follow list",ud)
 		conn, err := grpc.Dial(address, grpc.WithInsecure())
 
 		if err != nil {
@@ -336,6 +336,22 @@ func follow(w http.ResponseWriter, req *http.Request) {
 	}
 	http.Redirect(w, req, "/", http.StatusSeeOther)
 	
+}
+
+func removeDuplicatesUnordered(elements []string) []string {
+	encountered := map[string]bool{}
+
+	// Create a map of all unique elements.
+	for v:= range elements {
+		encountered[elements[v]] = true
+	}
+
+	// Place all keys from the map into a slice.
+	result := []string{}
+	for key, _ := range encountered {
+		result = append(result, key)
+	}
+	return result
 }
 
 func followothers(w http.ResponseWriter, req *http.Request) {
