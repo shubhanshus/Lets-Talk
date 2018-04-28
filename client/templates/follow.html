@@ -19,7 +19,6 @@
 		<p>Check to follow, uncheck to unfollow:</p>
 		<div>
 			<form id="followform" method="post" action="/follow">
-				
 				{{range $i, $user := .UserNames}}
 				{{$check := index $.Checks $i}}
 				{{$user}}: <input type="checkbox" name="email" value={{$user}} {{$check}}/><br />
