@@ -22,6 +22,7 @@ var talks = make([]*pb.Talk,count)
 var userlist = make([]string,count)
 var dbUsers = map[string]pb.User{}       // user ID, user
 var dbSessions = map[string]session{} // session ID, session
+var dbusertalk = map[string][]*pb.Talk{}
 
 type session struct {
 	pb.User
@@ -131,17 +132,19 @@ func (s *server) SendTalk(ctx context.Context, in *pb.TalkRequest) (*pb.TalkRepl
 		Email:in.Talk.Email,
 	}
 	talks=append(talks,&tal)
+	dbusertalk[in.Talk.Email]=append(dbusertalk[in.Talk.Email],&tal)
 	count= count + 1
 	log.Println(talks)
-	return &pb.TalkReply{Talk:talks,Message: "Talk added successfully"}, nil
+	return &pb.TalkReply{Talk:dbusertalk[in.Talk.Email],Message: "Talk added successfully"}, nil
 
 }
 
 func (s *server) FollowUsers(ctx context.Context, in *pb.FollowUserRequest) (*pb.FollowUserReply, error) {
 
 	//var usertalks = make([]*pb.Talk,count)
-	var dbusertalk = map[string][]*pb.Talk{}
+	log.Println("user list follow part:",in.Email)
 	dbusertalk[in.Username]= updateTalk(in.Email,talks)
+	log.Println("user talks updated:" ,dbusertalk[in.Username])
 	return &pb.FollowUserReply{Talk:dbusertalk[in.Username], Username:in.Username }, nil
 
 }
@@ -160,7 +163,6 @@ func updateTalk(userlist []string,talk []*pb.Talk) ([]*pb.Talk){
 	for _,us:=range userlist{
 		for _,tal:=range talk{
 			if tal.Email==us{
-				log.Println("in update talk",us)
 				usertalks=append(usertalks,tal)
 			}
 		}

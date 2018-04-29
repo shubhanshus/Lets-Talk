@@ -9,6 +9,7 @@ import (
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 	pb "../proto"
+	"fmt"
 )
 
 var tpl *template.Template
@@ -19,6 +20,7 @@ var userLoggedIn =false
 var un string
 var uname string
 var ud []string //follow list
+var ulist []string
 
 func init() {
 	tpl = template.Must(template.ParseGlob("templates/*"))
@@ -377,31 +379,18 @@ func followothers(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, errMsg , http.StatusForbidden)
 		return
 	}
-	log.Println(r.Userlist)
+	log.Println("response list:",r.Userlist)
 	log.Println(r.Message)
 	log.Println("followed users",ud)
 
-    var ulist []string
+	ulist=nil
     for _,us:=range r.Userlist{
 		if us!=""{
 			ulist=append(ulist,us)
 		}
 	}
 	check := make([]string, len(ulist))
-	for i := 0; i < len(ulist); i++ {
-      check[i] = "unchecked"
-	}
-	for i := 0; i < len(r.Userlist); i++{
-		for _,fl:=range ud{
-			if fl == r.Userlist[i]{
-				check[i] = "checked"
-				continue
-			}else{
-				check[i] = "unchecked"
-				continue
-			}
-		}
-	}
+	check= findfollow(ud,ulist)
 	log.Println("checked:", check)
 	tpl, err := template.ParseFiles("templates/follow.html") //parse the html file
 	if err != nil { // if there is an error
@@ -463,4 +452,32 @@ func unfollowothers(w http.ResponseWriter, req *http.Request) {
 		log.Print("template executing error: ", err) //log it on terminal
 	}
 	
+}
+
+func findfollow(slice1 []string, slice2 []string) []string {
+	var diff []string
+	var m1 map[string]int
+	m1 = make(map[string]int)
+	var m2 map[string]int
+	m2 = make(map[string]int)
+
+	for _, s1 := range slice1 {
+		m1[s1]=1
+	}
+	for _, s2 := range slice2 {
+		m2[s2]=1
+	}
+
+	for  key, _:= range m2{
+		if _, ok := m1[key]; ok {
+			diff=append(diff,"checked")
+		}else
+		{
+			diff=append(diff,"unchecked")
+		}
+	}
+
+	fmt.Println(m1)
+
+	return diff
 }
