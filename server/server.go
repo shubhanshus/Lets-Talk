@@ -152,7 +152,7 @@ func (s *server) FollowUsers(ctx context.Context, in *pb.FollowUserRequest) (*pb
 func (s *server) UnfollowUsers(ctx context.Context, in *pb.UnfollowUserRequest) (*pb.UnfollowUserReply, error) {
 
 	//var usertalks = make([]*pb.Talk,count)
-	
+
 	return &pb.UnfollowUserReply{}, nil
 
 }

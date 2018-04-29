@@ -296,6 +296,64 @@ func cancelaccount(w http.ResponseWriter, req *http.Request){
 
 }
 
+func unfollow(w http.ResponseWriter, req *http.Request) {
+	if !userLoggedIn {
+		http.Redirect(w, req, "/home", http.StatusSeeOther)
+		return
+	}
+	if req.Method == http.MethodPost {
+		var uf []string
+		req.ParseForm()
+		log.Println("Request:", req)
+		log.Println("Form data", req.Form)
+		for _, values := range req.Form { // range over map
+			for _, value := range values { // range over []string
+				uf = append(uf, value)
+			}
+		}
+		log.Println("unfollow list", ud)
+		ud = removeDuplicatesUnordered(ud)
+		log.Println("unfollow list", ud)
+
+		loop:
+			for i := 0; i < len(ud); i++ {
+				url := ud[i]
+				for _, rem := range uf {
+					if url == rem {
+						ud = append(ud[:i], ud[i+1:]...)
+						i-- // Important: decrease index
+						continue loop
+					}
+				}
+			}
+
+		log.Println("Final list after deletion:",ud)
+		conn, err := grpc.Dial(address, grpc.WithInsecure())
+
+		if err != nil {
+			log.Fatalf("did not connect: %v", err)
+		}
+		defer conn.Close()
+		c := pb.NewLetstalkClient(conn)
+
+		// Contact the server and print out its response.
+		ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+		defer cancel()
+		r, err := c.FollowUsers(ctx, &pb.FollowUserRequest{Username:u.Email,Email: ud})
+		if err != nil {
+			errMsg:= err.Error()
+			errMsg=errMsg[33:len(errMsg)]
+			http.Error(w, errMsg , http.StatusForbidden)
+			return
+		}
+		log.Println("Follow Return:",r.Talk)
+		log.Println(r.Username)
+		talks=r.Talk
+	}
+
+	http.Redirect(w, req, "/", http.StatusSeeOther)
+
+}
 func follow(w http.ResponseWriter, req *http.Request) {
 	if !userLoggedIn{
 		http.Redirect(w, req, "/home", http.StatusSeeOther)
@@ -304,7 +362,8 @@ func follow(w http.ResponseWriter, req *http.Request) {
 	if req.Method == http.MethodPost {
 		ud =nil
 		req.ParseForm()
-		log.Println(req.Form)
+		log.Println("Request:",req)
+		log.Println("Form data",req.Form)
 		for _, values := range req.Form {   // range over map
 			for _, value := range values {    // range over []string
 				ud=append(ud, value)
@@ -415,7 +474,7 @@ func unfollowothers(w http.ResponseWriter, req *http.Request) {
 		http.Redirect(w, req, "/home", http.StatusSeeOther)
 		return
 	}
-
+	log.Println("Inside unfollow")
 	conn, err := grpc.Dial(address, grpc.WithInsecure())
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)
@@ -433,7 +492,7 @@ func unfollowothers(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, errMsg , http.StatusForbidden)
 		return
 	}
-	log.Println(r)
+	log.Println("unfollow initial talk",r.Talk)
 	
     //var ulist []string
     

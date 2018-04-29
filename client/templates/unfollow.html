@@ -18,7 +18,7 @@
 		<h>Hi, <span id="uname">{{.UserName}}</span></h>
 		<p>Check to unfollow:</p>
 		<div>
-			<form id="followform" method="post" action="/follow">
+			<form id="followform" method="post" action="/unfollow">
 				{{range .UserNames}}
 				{{.}}: <input type="checkbox" name="email" value={{.}} /><br />
 				{{end}}

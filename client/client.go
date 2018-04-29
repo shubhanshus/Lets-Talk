@@ -19,6 +19,7 @@ func main() {
 	http.HandleFunc("/talk", postTalk)
 	http.HandleFunc("/list", showTalk)
 	http.HandleFunc("/follow", follow)
+	http.HandleFunc("/unfollow", unfollow)
 	http.HandleFunc("/followothers", followothers)
 	http.HandleFunc("/unfollowothers", unfollowothers)
 
