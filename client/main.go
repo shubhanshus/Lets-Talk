@@ -444,9 +444,9 @@ func unfollowothers(w http.ResponseWriter, req *http.Request) {
 	var UnfollowPageVars unfollowVariables
 	UnfollowPageVars = unfollowVariables{
 		UserName: uname,
-		UserNames: ulist,
+		UserNames: ud,
 	}
-	log.Println("ulist",ulist)
+	log.Println("ulist",ud)
 	err = tpl.Execute(w, UnfollowPageVars) //execute the template and pass it to index page
 	if err != nil { // if there is an error
 		log.Print("template executing error: ", err) //log it on terminal
