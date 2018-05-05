@@ -16,6 +16,7 @@ var tpl *template.Template
 var u pb.User
 var talks []*pb.Talk
 //var actAddress = "localhost:8001"
+var actAddress string
 var userLoggedIn =false
 var un string
 var uname string
@@ -25,7 +26,6 @@ var ulist []string
 func init() {
 	tpl = template.Must(template.ParseGlob("templates/*"))
 }
-
 
 
 func index(w http.ResponseWriter, req *http.Request){
@@ -79,7 +79,7 @@ func signup(w http.ResponseWriter, req *http.Request) {
 			http.Redirect(w, req, "/", http.StatusSeeOther)
 			return
 		}
-		
+
 		//dial server
 		conn, err := grpc.Dial(actAddress, grpc.WithInsecure())
 		if err != nil {

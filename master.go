@@ -8,6 +8,7 @@ import (
     "time"
     "net/http"
     "encoding/json"
+    "os"
 )
 
 var actAddress string
@@ -39,7 +40,7 @@ func main(){
         }else if checkAvailability(address[1]){
             actAddress = address[1]
 
-             //get previous log
+            //get previous log
         }else if checkAvailability(address[2]){
             actAddress = address[2]
 
@@ -48,7 +49,7 @@ func main(){
             actAddress = ""
         }
         
-        
+        time.Sleep(10 * time.Second)
         getAddress()
     }   
     http.HandleFunc("/actAddress", showAddress)
@@ -71,8 +72,22 @@ func checkAvailability(address string) bool{
         return false
     }else{
         log.Println("Reach Site: ", address)
-        return true
-    }
+
+        //write address to log//////////////////////////////////////////////////////////////////////////////
+        //convert from []string to []byte
+        f, err := os.OpenFile("global.log", os.O_APPEND|os.O_WRONLY, 0600)
+        if err != nil {
+            panic(err)
+        }
+
+        defer f.Close()
+
+        if _, err = f.WriteString(address); err != nil {
+            panic(err)
+        }
+
+            return true
+        }
 
 }
 
