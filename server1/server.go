@@ -55,6 +55,7 @@ func (s *server) SendSignup(ctx context.Context, in *pb.SignupRequest) (*pb.Sign
 	//sID, _ := uuid.NewV4()
 	dbSessions[in.User.Email]=session{u, time.Now()}
 	userlist=append(userlist,u.Email)
+	
 	log.Println("user addition successful")
 	return &pb.SignupReply{Message:in.User.Email, Sessionid:in.User.Email}, nil
 }

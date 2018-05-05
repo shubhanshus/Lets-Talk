@@ -26,7 +26,7 @@ func main(){
         log.Fatalf("failed to listen: %v", err)
     }
     grpc.NewServer()
-    log.Printf("master server created")
+    log.Printf("master coordinator created")
 
 
     for{
@@ -36,6 +36,8 @@ func main(){
             actAddress = address[1]
         }else if checkAvailability(address[2]){
             actAddress = address[2]
+        }else{
+            actAddress = ""
         }
 
         getAddress()
@@ -56,8 +58,19 @@ func checkAvailability(address string) bool{
 
 }
 
-
 func getAddress() {
-    log.Println("Using server:", actAddress)
+    if actAddress != ""{
+        log.Println("Using server:", actAddress)
+    }else{
+        log.Println("No server is available, please wait a moment.")
+    }
+    
 }
+
+//copy previous servers' log
+func copyLog() {
+    
+}
+
+
 

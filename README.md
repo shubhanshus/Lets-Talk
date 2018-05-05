@@ -6,10 +6,17 @@ Yingxi Cao(yc2539) and Shubhanshu Surana(ss11012)
 
 This is the final project for distributed systems class. 
 
+Part1-Basic application
+
 Part2- Separate front-end and backend
 Front server port 8081
 Back server port 8080
 Communicate through RPC and channel
+
+Part3- Replicate servers
+port 8001/8002/8003
+client 8080
+master 8000
 
 How to run on MacOS :
 export GOPATH=/Users/XXX/Let-s-talk-master/
