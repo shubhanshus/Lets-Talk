@@ -11,6 +11,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 	"time"
 	"errors"
+	"os"
 )
 
 const (
@@ -55,7 +56,21 @@ func (s *server) SendSignup(ctx context.Context, in *pb.SignupRequest) (*pb.Sign
 	//sID, _ := uuid.NewV4()
 	dbSessions[in.User.Email]=session{u, time.Now()}
 	userlist=append(userlist,u.Email)
-	
+
+
+	//append registered user to log//////////////////////////////////////////////////////////////////////////////
+	//convert from []string to []byte
+    f, err := os.OpenFile("registerUsers.log", os.O_APPEND|os.O_WRONLY, 0600)
+	if err != nil {
+	    panic(err)
+	}
+
+	defer f.Close()
+
+	if _, err = f.WriteString(in.User.Email+","); err != nil {
+	    panic(err)
+	}
+
 	log.Println("user addition successful")
 	return &pb.SignupReply{Message:in.User.Email, Sessionid:in.User.Email}, nil
 }
@@ -76,7 +91,6 @@ func (s *server) SendLogin(ctx context.Context, in *pb.LoginRequest) (*pb.LoginR
 	dbSessions[in.Email]=session{u, time.Now()}
 	log.Println("server index user:",in.Email)
 	return &pb.LoginReply{Message: in.Email}, nil
-
 
 }
 

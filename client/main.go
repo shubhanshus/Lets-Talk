@@ -15,7 +15,7 @@ import (
 var tpl *template.Template
 var u pb.User
 var talks []*pb.Talk
-var address = "localhost:8080"
+//var actAddress = "localhost:8001"
 var userLoggedIn =false
 var un string
 var uname string
@@ -81,7 +81,7 @@ func signup(w http.ResponseWriter, req *http.Request) {
 		}
 		
 		//dial server
-		conn, err := grpc.Dial(address, grpc.WithInsecure())
+		conn, err := grpc.Dial(actAddress, grpc.WithInsecure())
 		if err != nil {
 			log.Fatalf("did not connect: %v", err)
 		}
@@ -133,7 +133,7 @@ func login(w http.ResponseWriter, req *http.Request) {
 		}
 
 
-		conn, err := grpc.Dial(address, grpc.WithInsecure())
+		conn, err := grpc.Dial(actAddress, grpc.WithInsecure())
 		if err != nil {
 			log.Fatalf("did not connect: %v", err)
 		}
@@ -168,7 +168,7 @@ func logout(w http.ResponseWriter, req *http.Request) {
 	}
 	cookie, _ := req.Cookie("session")
 	//dial server
-	conn, err := grpc.Dial(address, grpc.WithInsecure())
+	conn, err := grpc.Dial(actAddress, grpc.WithInsecure())
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)
 	}
@@ -215,7 +215,7 @@ func postTalk(w http.ResponseWriter, req *http.Request) {
 	if req.Method == http.MethodPost {
 
 		//dial server
-		conn, err := grpc.Dial(address, grpc.WithInsecure())
+		conn, err := grpc.Dial(actAddress, grpc.WithInsecure())
 		if err != nil {
 			log.Fatalf("did not connect: %v", err)
 		}
@@ -251,7 +251,7 @@ func showTalk(w http.ResponseWriter, req *http.Request) {
 func cancel(w http.ResponseWriter, req *http.Request) {
 
 	//dial server
-	conn, err := grpc.Dial(address, grpc.WithInsecure())
+	conn, err := grpc.Dial(actAddress, grpc.WithInsecure())
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)
 	}
@@ -328,7 +328,7 @@ func unfollow(w http.ResponseWriter, req *http.Request) {
 			}
 
 		log.Println("Final list after deletion:",ud)
-		conn, err := grpc.Dial(address, grpc.WithInsecure())
+		conn, err := grpc.Dial(actAddress, grpc.WithInsecure())
 
 		if err != nil {
 			log.Fatalf("did not connect: %v", err)
@@ -372,7 +372,7 @@ func follow(w http.ResponseWriter, req *http.Request) {
 		log.Println("follow list",ud)
 		ud=removeDuplicatesUnordered(ud)
 		log.Println("final follow list",ud)
-		conn, err := grpc.Dial(address, grpc.WithInsecure())
+		conn, err := grpc.Dial(actAddress, grpc.WithInsecure())
 
 		if err != nil {
 			log.Fatalf("did not connect: %v", err)
@@ -421,7 +421,7 @@ func followothers(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	conn, err := grpc.Dial(address, grpc.WithInsecure())
+	conn, err := grpc.Dial(actAddress, grpc.WithInsecure())
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)
 	}
@@ -475,7 +475,7 @@ func unfollowothers(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 	log.Println("Inside unfollow")
-	conn, err := grpc.Dial(address, grpc.WithInsecure())
+	conn, err := grpc.Dial(actAddress, grpc.WithInsecure())
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)
 	}

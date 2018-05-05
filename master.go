@@ -6,6 +6,8 @@ import (
     "net"
     "google.golang.org/grpc"
     "time"
+    "net/http"
+    "encoding/json"
 )
 
 var actAddress string
@@ -28,21 +30,37 @@ func main(){
     grpc.NewServer()
     log.Printf("master coordinator created")
 
-
-    for{
+    //make a channel for actual server address
+    for {
         if checkAvailability(address[0]) {
             actAddress = address[0]
+
+            //get previous log
         }else if checkAvailability(address[1]){
             actAddress = address[1]
+
+             //get previous log
         }else if checkAvailability(address[2]){
             actAddress = address[2]
+
+             //get previous log
         }else{
             actAddress = ""
         }
-
+        
+        
         getAddress()
-    }
+    }   
+    http.HandleFunc("/actAddress", showAddress)
     
+}
+
+func showAddress(w http.ResponseWriter, req *http.Request) {
+    //get json api
+
+    json.NewEncoder(w).Encode(actAddress)
+
+
 }
 
 func checkAvailability(address string) bool{
