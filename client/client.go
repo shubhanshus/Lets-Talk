@@ -28,6 +28,6 @@ func main() {
 	http.Handle("/img/", http.StripPrefix("/img/", http.FileServer(http.Dir("img"))))
 	http.Handle("/js/", http.StripPrefix("/js/", http.FileServer(http.Dir("js"))))
 	http.Handle("/favicon.ico", http.NotFoundHandler())
-	http.ListenAndServe(":8081", nil)
+	http.ListenAndServe(":8080", nil)
 
 }
