@@ -212,6 +212,11 @@ service Letstalk {
 
   rpc JoinSlave(Node) returns (JoinReply) {}
 
+  rpc WhoIsPrimary (WhoisPrimaryRequest) returns (WhoIsPrimaryResponse) {}
+  rpc HeartBeat (HeartBeatRequest) returns (HeartBeatResponse) {}
+  rpc Prepare (PrepareArgs) returns (PrepareReply) {}
+  rpc Recovery (RecoveryArgs) returns (RecoveryReply) {}
+
 
 }
 
