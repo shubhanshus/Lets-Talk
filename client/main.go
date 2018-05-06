@@ -15,7 +15,7 @@ import (
 var tpl *template.Template
 var u pb.User
 var talks []*pb.Talk
-var address = "localhost:8080"
+var address = "localhost:8082"
 var userLoggedIn =false
 var un string
 var uname string
@@ -91,7 +91,7 @@ func signup(w http.ResponseWriter, req *http.Request) {
 		// Contact the server and print out its response.
 		ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 		defer cancel()
-		var user pb.User;
+		var user pb.User
 		user.Email= un
 		user.Password1=p1
 		user.Lastname=l

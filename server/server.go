@@ -3,14 +3,15 @@ package main
 import (
 	"log"
 	"net"
-
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 	pb "../proto"
-	"google.golang.org/grpc/reflection"
 	"golang.org/x/crypto/bcrypt"
 	"time"
 	"errors"
+	"github.com/soheilhy/cmux"
+	"golang.org/x/sync/errgroup"
+	"net/http"
 )
 
 const (
@@ -31,6 +32,9 @@ type session struct {
 
 // server is used to implement server.
 type server struct{}
+
+var nodeList = map [int32]pb.Node{}
+
 
 // SendSignup implements signup request
 func (s *server) SendSignup(ctx context.Context, in *pb.SignupRequest) (*pb.SignupReply, error) {
@@ -185,18 +189,70 @@ func deleteTalk(username string,talk []*pb.Talk) ([]*pb.Talk){
 }
 
 func main() {
-	lis, err := net.Listen("tcp", port)
-	if err != nil {
-		log.Fatalf("failed to listen: %v", err)
-	}
-	s := grpc.NewServer()
-	log.Printf("server created")
-	pb.RegisterLetstalkServer(s, &server{})
-	// Register reflection service on gRPC server.
-	reflection.Register(s)
-	if err := s.Serve(lis); err != nil {
-		log.Fatalf("failed to serve: %v", err)
-	}
+	//lis, err := net.Listen("tcp", port)
+	//if err != nil {
+	//	log.Fatalf("failed to listen: %v", err)
+	//}
+	//s := grpc.NewServer()
+	//log.Printf("server created")
+	//pb.RegisterLetstalkServer(s, &server{})
+	//// Register reflection service on gRPC server.
+	//reflection.Register(s)
+	//if err := s.Serve(lis); err != nil {
+	//	log.Fatalf("failed to serve: %v", err)
+	//}
+	setupServer()
 }
+
+
+func setupServer() {
+
+	listener, err := net.Listen("tcp", ":8082")
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Printf("server created")
+	m := cmux.New(listener)
+	grpcListener := m.Match(cmux.HTTP2HeaderField("content-type", "application/grpc"))
+	httpListener := m.Match(cmux.HTTP1Fast())
+
+	g := new(errgroup.Group)
+	g.Go(func() error { return grpcServe(grpcListener) })
+	g.Go(func() error { return httpServe(httpListener) })
+	g.Go(func() error { return m.Serve() })
+
+	log.Println("run server:", g.Wait())
+}
+
+
+//func (*server) JoinSlave(ctx context.Context, in *pb.Node) (*pb.JoinReply, error) {
+//
+//	message:= fmt.Sprint(in.Id)
+//
+//	return &pb.JoinReply{Message: message}, nil
+//}
+
+func grpcServe(l net.Listener) error {
+	s := grpc.NewServer()
+	pb.RegisterLetstalkServer(s,&server{})
+	return s.Serve(l)
+}
+
+func httpServe(l net.Listener) error {
+	mux := http.NewServeMux()
+	mux.HandleFunc("/remove", func(w http.ResponseWriter, _ *http.Request) {
+		w.Write([]byte("remove"))
+	})
+
+	mux.HandleFunc("/join", func(w http.ResponseWriter, _ *http.Request) {
+		w.Write([]byte("join"))
+	})
+
+	s := &http.Server{Handler: mux}
+	return s.Serve(l)
+}
+
+
+
 
 
