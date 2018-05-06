@@ -211,7 +211,7 @@ service Letstalk {
   rpc UnfollowUsers (UnfollowUserRequest) returns (UnfollowUserReply) {}
 
   rpc JoinSlave(Node) returns (JoinReply) {}
-  rpc Prepare (PrepareArgs) returns (PrepareReply) {}
+
 
 }
 
