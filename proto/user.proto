@@ -150,6 +150,8 @@ message UserData {
     string Username =1;
     string Password =2;
     repeated Talk TweetList = 3;
+    repeated string Follows=4;
+
 }
 
 message ViewChangeArgs {
@@ -192,7 +194,6 @@ message ServerCommReply {
 }
 
 
-
 //The signup request
 service Letstalk {
   // Sends a signup request
@@ -215,12 +216,13 @@ service Letstalk {
 
   rpc FollowUsers (FollowUserRequest) returns (FollowUserReply) {}
 
-  rpc UnfollowUsers (UnfollowUserRequest) returns (UnfollowUserReply) {}
-
   rpc JoinSlave(Node) returns (JoinReply) {}
 
-
-
+  rpc UnfollowUsers (UnfollowUserRequest) returns (UnfollowUserReply) {}
+  rpc WhoIsPrimary (WhoisPrimaryRequest) returns (WhoIsPrimaryResponse) {}
+  rpc HeartBeat (HeartBeatRequest) returns (HeartBeatResponse) {}
+  rpc Prepare (PrepareArgs) returns (PrepareReply) {}
+  rpc Recovery (RecoveryArgs) returns (RecoveryReply) {}
 
 }
 
