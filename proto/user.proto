@@ -99,13 +99,7 @@ message TalkReply {
   repeated Talk talk=2;
 }
 
-message GetUsers{
-  repeated User user=1;
-}
 
-message GetTalks{
-  repeated Talk talk=1;
-}
 
 message Node{
     int32 id =1;
@@ -193,8 +187,15 @@ message ServerCommArgs {
 message ServerCommReply {
 }
 
+message GetUsers{
+    repeated User user=1;
+}
 
-//The signup request
+message GetTalks{
+    repeated Talk talk=1;
+}
+
+
 service Letstalk {
   // Sends a signup request
   rpc SendSignup (SignupRequest) returns (SignupReply) {}

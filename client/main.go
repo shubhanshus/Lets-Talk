@@ -116,23 +116,18 @@ func signup(w http.ResponseWriter, req *http.Request) {
 }
 
 func login(w http.ResponseWriter, req *http.Request) {
-
 	if userLoggedIn{
 		http.Redirect(w, req, "/home", http.StatusSeeOther)
 		return
 	}
-
 	// process form submission
 	if req.Method == http.MethodPost {
 		un := req.FormValue("name")
 		p := req.FormValue("password")
-		
 		if un == "" || p == ""{
 			http.Redirect(w, req, "/", http.StatusSeeOther)
 			return
 		}
-
-
 		conn, err := grpc.Dial(address, grpc.WithInsecure())
 		if err != nil {
 			log.Fatalf("did not connect: %v", err)
@@ -149,7 +144,6 @@ func login(w http.ResponseWriter, req *http.Request) {
 			http.Error(w, errMsg , http.StatusForbidden)
 			return
 		}
-		
 		createCookie(r.SessionId,w)
 		userLoggedIn=true
 		u.Email=un

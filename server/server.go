@@ -322,7 +322,6 @@ func setupServer(srv server) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	//checkOtherServers(srv)
 	log.Printf("server created")
 	m := cmux.New(listener)
 	grpcListener := m.Match(cmux.HTTP2HeaderField("content-type", "application/grpc"))
@@ -379,17 +378,15 @@ func (s *server) WhoIsPrimary(ctx context.Context, in *pb.WhoisPrimaryRequest) (
 }
 
 
-//used to rpc and check if connection is alive
+
 func (s *server) HeartBeat(ctx context.Context, in *pb.HeartBeatRequest) (*pb.HeartBeatResponse, error) {
 	return &pb.HeartBeatResponse{IsAlive: true, CurrentView: int32(s.currentView)}, nil
 }
 
-//internal function call
 func GetPrimary(view int, nservers int) int {
 	return view % nservers
 }
 
-//prepare is used to synchronize servers
 func (srv *server) Prepare(ctx context.Context, args *pb.PrepareArgs) (reply *pb.PrepareReply, err error) {
 	srv.mu.Lock()
 	defer srv.mu.Unlock()
@@ -471,8 +468,6 @@ func (srv *server) Prepare(ctx context.Context, args *pb.PrepareArgs) (reply *pb
 
 }
 
-//Start calls prepare and returns index to commit on. In this case with >1/2 prepare's start does not immediately write the commit index.
-//The commit index is updated after > 1/2 Prepare+RPC
 func (srv *server) Start(command string) (index int, view int, ok bool) {
 	srv.mu.Lock()
 	defer srv.mu.Unlock()
