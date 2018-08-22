@@ -1,15 +1,14 @@
 # distributed_systems_final
-Project Url: https://github.com/caocasey/Let-s-talk
-
 Team members:
 Yingxi Cao(yc2539) and Shubhanshu Surana(ss11012)
 
 This is the final project for distributed systems class. 
 
-Part2- Separate front-end and backend
+Separate front-end and backend
 Front server port 8081
 Back server port 8080
 Communicate through RPC and channel
+Data replication across servers is achived using ViewStamp Replication 
 
 How to run on MacOS :
 export GOPATH=/Users/XXX/Let-s-talk-master/
@@ -18,9 +17,6 @@ go run model.go client.go session.go main.go
 
 To start backend server: go to directory /server
 go run server.go
-
-To run test cases for part 2:
-run the server.go and then do go test -v
 
 How to run on Window:
 go build inside both the client and server folder
